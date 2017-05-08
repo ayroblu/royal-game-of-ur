@@ -30,11 +30,3 @@ describe('backend', ()=>{
   it('validate via move count - should always be sequential', ()=>{ expect(false).toBeTruthy() })
   it('in a room, live updates with socket io', ()=>{ expect(false).toBeTruthy() })
 })
-describe('gameplay', ()=>{
-  it('pieces and their movement', ()=>{ expect(false).toBeTruthy() })
-  it('dice roll - 4 tetrahedral with 2 white points each', ()=>{ expect(false).toBeTruthy() })
-  it('has squares for re rolls', ()=>{ expect(false).toBeTruthy() })
-  it('has invulnerable square with reroll', ()=>{ expect(false).toBeTruthy() })
-  it('has a show valid moves', ()=>{ expect(false).toBeTruthy() })
-  it('removes enemy piece', ()=>{ expect(false).toBeTruthy() })
-})

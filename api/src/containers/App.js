@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 
 import Home from './Home'
-import Temp from './Temp'
+import Game from './Game'
 import NoMatch from '../components/NoMatch'
 
 import * as userActions from '../actions/user'
@@ -31,11 +31,15 @@ class App extends Component {
       <div>
         <Switch>
           <Route exact path="/" component={Home}/>
-          <Route exact path="/first" component={Temp}/>
+          <Route exact path="/game/:roomId" component={Game}/>
           <Route component={NoMatch}/>
         </Switch>
-        <Link to='/first'>first</Link>
-        <Link to='/'>Home</Link>
+        <div>
+          <Link to='/game/1'>Game</Link>
+        </div>
+        <div>
+          <Link to='/'>Home</Link>
+        </div>
       </div>
     )
   }
