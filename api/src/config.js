@@ -1,6 +1,7 @@
-let apiUrl = ''
-if (process.env.REACT_APP_API_URL) {
-  apiUrl = process.env.REACT_APP_API_URL
+let apiUrl = 'http://localhost:3001'
+apiUrl = ''
+if (process.env.NODE_ENV === 'production') {
+  apiUrl = ''
 }
 export {
   apiUrl

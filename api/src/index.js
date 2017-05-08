@@ -1,22 +1,29 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
-import { BrowserRouter } from 'react-router-dom'
+import createHistory from 'history/createBrowserHistory'
+import { ConnectedRouter } from 'react-router-redux'
 
 import configureStore from './store'
 import './index.css'
 import App from './containers/App'
+import DevTools from './components/DevTools'
 
 // Let the reducers handle initial state
 const initialState = {}
-const store = configureStore(initialState)
+const history = createHistory()
+const store = configureStore(initialState, history)
+const isProduction = process.env.NODE_ENV === 'production'
 
 const render = Container=>{
   ReactDOM.render(
     <Provider store={store}>
-      <BrowserRouter>
-        <Container />
-      </BrowserRouter>
+      <div>
+        <ConnectedRouter history={history}>
+          <Container />
+        </ConnectedRouter>
+        {!isProduction && <DevTools />}
+      </div>
     </Provider>
   , document.getElementById('root')
   )
@@ -25,6 +32,7 @@ render(App)
 
 if (process.env.NODE_ENV==='development' && module.hot) {
   module.hot.accept('./containers/App', () => {
+    console.clear()
     const NewApp = require('./containers/App').default
     render(NewApp)
   })

@@ -1,0 +1,26 @@
+exports[`test renders correctly 1`] = `
+<div>
+  <div
+    className="Home">
+    <h1>
+      Home Page
+    </h1>
+    <p>
+      This is a placeholder
+    </p>
+    <p>
+      I want this to be a user\'s dashboard, so list of events and links
+    </p>
+  </div>
+  <a
+    href="/first"
+    onClick={[Function]}>
+    first
+  </a>
+  <a
+    href="/"
+    onClick={[Function]}>
+    Home
+  </a>
+</div>
+`;
