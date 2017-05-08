@@ -10,7 +10,6 @@ services:
       - /app/node_modules
     ports:
       - "5041:80"
-      - "5858:5858" # I believe that's the editor
     networks:
       - front-tier
       - back-tier
@@ -28,7 +27,7 @@ services:
     networks:
       - back-tier
     ports:
-      - "5432:5432"
+      - "5431:5432"
     env_file: .env
     environment:
       - POSTGRES_USER=docker
