@@ -3,10 +3,11 @@ version: "3"
 services:
   rgu-api:
     build: ./api
-    command: npm start
+    command: npm run start:server
     #container_name: api
     volumes:
       - ./api:/app
+      - /app/node_modules
     ports:
       - "5041:80"
       - "5858:5858" # I believe that's the editor
@@ -31,7 +32,7 @@ services:
     env_file: .env
     environment:
       - POSTGRES_USER=docker
-      - POSTGRES_DB=eventp
+      - POSTGRES_DB=rgu
 
 volumes:
   data:

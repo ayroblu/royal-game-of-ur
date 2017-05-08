@@ -1,7 +1,8 @@
 {
-  "name": "event-planner",
+  "name": "royal-game-of-ur",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://localhost:5041/",
   "devDependencies": {
     "chai": "^3.5.0",
     "chai-as-promised": "^6.0.0",
