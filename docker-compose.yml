@@ -1,0 +1,42 @@
+version: "3"
+
+services:
+  rgu-api:
+    build: ./api
+    command: npm start
+    #container_name: api
+    volumes:
+      - ./api:/app
+    ports:
+      - "5041:80"
+      - "5858:5858" # I believe that's the editor
+    networks:
+      - front-tier
+      - back-tier
+    environment:
+      - POSTGRES_USER=regular_user
+      - POSTGRES_PASSWORD=regular_password
+      - POSTGRES_DB=rgu
+
+  rgu-db:
+    #image: postgres:latest
+    build: ./db
+    #container_name: db
+    volumes:
+      - "data:/var/lib/postgresql/data"
+    networks:
+      - back-tier
+    ports:
+      - "5432:5432"
+    env_file: .env
+    environment:
+      - POSTGRES_USER=docker
+      - POSTGRES_DB=eventp
+
+volumes:
+  data:
+
+networks:
+  front-tier:
+  back-tier:
+

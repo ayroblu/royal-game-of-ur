@@ -1,0 +1,47 @@
+{
+  "name": "event-planner",
+  "version": "0.1.0",
+  "private": true,
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "chai-as-promised": "^6.0.0",
+    "chromedriver": "^2.25.1",
+    "concurrently": "^3.4.0",
+    "mocha": "^3.1.2",
+    "react-scripts": "0.9.5",
+    "selenium-webdriver": "^3.0.0-beta-3",
+    "sinon": "^1.17.6",
+    "sinon-chai": "^2.8.0"
+  },
+  "dependencies": {
+    "babel-cli": "^6.7.5",
+    "babel-preset-react-app": "^2.2.0",
+    "body-parser": "^1.17.1",
+    "compression": "^1.6.2",
+    "dataloader": "^1.2.0",
+    "express": "^4.15.2",
+    "express-graphql": "^0.5.1",
+    "graphql": "^0.5.0",
+    "graphql-relay": "^0.4.0",
+    "morgan": "^1.8.1",
+    "node-fetch": "^1.5.1",
+    "nodemon": "^1.9.1",
+    "react": "^15.5.4",
+    "react-dom": "^15.5.4",
+    "react-redux": "^5.0.4",
+    "react-router-dom": "^4.1.1",
+    "redux": "^3.6.0"
+  },
+  "scripts": {
+    "start": "concurrently 'npm run start:client' 'npm run start:server'",
+    "start:client": "react-scripts start",
+    "start:server": "NODE_ENV=development nodemon --ignore '.*.swp' --watch server server/index.js --exec babel-node --presets react-app",
+    "serve:server": "node dist/index.js",
+    "build": "npm run build:client && npm run build:server",
+    "build:client": "react-scripts build",
+    "build:server": "NODE_ENV=production babel server -d dist --presets react-app",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject",
+    "redux:add": "node custom-scripts/redux.js"
+  }
+}

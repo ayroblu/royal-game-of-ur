@@ -1,0 +1,3 @@
+[submodule "event-planner"]
+	path = event-planner
+	url = git@bitayro:ayro-/event-planner.git
