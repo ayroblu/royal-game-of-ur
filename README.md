@@ -1,11 +1,9 @@
-Event Planner Backend
+The Royal Game of Ur
 =====================
 
-TODO
-----
-* Use shmig for migrations
-    * https://github.com/mbucc/shmig
-* As a build step or something, the website needs to be built and copied in to the api
+I saw this on youtube recently and wanted to make a basic implementation
+
+* [YouTube link: Tom Scott vs Irving Finkel: The Royal Game of Ur | PLAYTHROUGH | International Tabletop Day 2017](https://www.youtube.com/watch?v=WZskjLq040I)
 
 Installation
 ------------
