@@ -4,6 +4,7 @@ The Royal Game of Ur
 I saw this on youtube recently and wanted to make a basic implementation
 
 * [YouTube link: Tom Scott vs Irving Finkel: The Royal Game of Ur | PLAYTHROUGH | International Tabletop Day 2017](https://www.youtube.com/watch?v=WZskjLq040I)
+* [![IMAGE ALT TEXT](http://img.youtube.com/vi/WZskjLq040I/0.jpg)](http://www.youtube.com/watch?v=WZskjLq040I "Tom Scott vs Irving Finkel: The Royal Game of Ur")
 
 Installation
 ------------
