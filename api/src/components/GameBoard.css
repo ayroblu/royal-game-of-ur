@@ -1,0 +1,6 @@
+.GameBoard{
+}
+.GameBoard > .row{
+  display: flex;
+  justify-content: center;
+}

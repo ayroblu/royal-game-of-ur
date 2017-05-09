@@ -1,0 +1,16 @@
+.GameBlock{
+  width: 100px;
+  height: 100px;
+  border: 1px solid black;
+  background: #eee;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: -1px -1px 0 0;
+}
+.GameBlock.empty{
+  border: 1px solid transparent;
+  background: transparent;
+}
+.GameBlock.invulnerable{
+}
