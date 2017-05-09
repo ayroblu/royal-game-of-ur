@@ -7,6 +7,7 @@ import {
 } from 'graphql'
 
 import {PersonType, PersonInputType} from './PersonType'
+import {GameType} from './GameType'
 
 const QueryType = new GraphQLObjectType({
   name: 'Query'
@@ -24,6 +25,16 @@ const QueryType = new GraphQLObjectType({
           ast.fieldASTs.map(
             f=>f.selectionSet.selections.map(s=>s.name.value)), null, 2))
         return loaders.person.load(person)
+      }
+    }
+  , person: {
+      type: GameType
+    , description: 'Get a saved game'
+    , args: {
+        id: {type: GraphQLString}
+      }
+    , resolve: (root, game, {loaders}, ast)=>{
+        return loaders.game.load(game)
       }
     }
   })
