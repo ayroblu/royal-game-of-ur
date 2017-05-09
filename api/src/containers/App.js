@@ -8,11 +8,12 @@ import Game from './Game'
 import NoMatch from '../components/NoMatch'
 
 import * as userActions from '../actions/user'
+import * as mainActions from '../actions/main'
 import {GraphQLApi} from '../api'
 
-const mainQuery = `
+const query = `
 {
-  person(id:1){
+  person(id:8){
     firstName
   }
 }
@@ -20,13 +21,29 @@ const mainQuery = `
 class App extends Component {
   componentWillMount(){
     const api = new GraphQLApi()
-    api.runQuery(mainQuery).then(res=>{
+    api.runQuery(query).then(res=>{
       console.log(res)
+      this.props.mainActions.set({loading: false})
     }).catch(err=>{
       console.error('Connection error', err)
+      this.props.mainActions.set({loading: false, errorText: 'Connection error'})
     })
   }
+  _renderLoading(){
+    return (
+      <div>Loading</div>
+    )
+  }
   render(){
+    if (this.props.main.loading){
+      return (
+        <div>Loading</div>
+      )
+    } else if (this.props.main.errorText){
+      return (
+        <div>Error: {this.props.main.errorText}</div>
+      )
+    }
     return (
       <div>
         <Switch>
@@ -47,6 +64,8 @@ class App extends Component {
 
 export default withRouter(connect(state=>({
   user: state.user
+, main: state.main
 }), dispatch=>({
   userActions: bindActionCreators(userActions, dispatch)
+, mainActions: bindActionCreators(mainActions, dispatch)
 }))(App))

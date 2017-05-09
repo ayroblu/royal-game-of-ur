@@ -1,4 +1,5 @@
 .GameBoard{
+  position: relative;
 }
 .GameBoard > .row{
   display: flex;

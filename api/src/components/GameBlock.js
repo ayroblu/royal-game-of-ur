@@ -10,15 +10,16 @@ class GameBlock extends Component {
   , reroll: PropTypes.bool
   , invulnerable: PropTypes.bool
   , player: PropTypes.object
+  , onClick: PropTypes.func
   }
   render() {
-    const {empty, reroll, invulnerable, player} = this.props
+    const {empty, reroll, invulnerable} = this.props
     let text = ''
     if (invulnerable) text+= 'Invulnerable'
     if (invulnerable && reroll) text+= '\n'
     if (reroll) text+= 'Reroll'
     return (
-      <div className={cn('GameBlock', !!empty && 'empty', !!reroll && 'reroll', !!invulnerable && 'invulnerable')}>
+      <div className={cn('GameBlock', !!empty && 'empty', !!reroll && 'reroll', !!invulnerable && 'invulnerable')} onClick={this.props.onClick}>
         <div>{text}</div>
       </div>
     )

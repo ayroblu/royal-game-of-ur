@@ -7,7 +7,7 @@ import Home from './Home';
 //  ReactDOM.render(<Home store={{}} />, div);
 //});
 
-describe('layout', ()=>{
+describe.skip('layout', ()=>{
   it('has gameboard', ()=>{ expect(false).toBeTruthy() })
   it('has players sections', ()=>{ expect(false).toBeTruthy() })
   it('has rooms', ()=>{ expect(false).toBeTruthy() })
@@ -19,12 +19,12 @@ describe('layout', ()=>{
   it('has victory page/overlay', ()=>{ expect(false).toBeTruthy() })
   it('has loser page/overlay', ()=>{ expect(false).toBeTruthy() })
 })
-describe('keyboard shortcuts', ()=>{
+describe.skip('keyboard shortcuts', ()=>{
   it('cursor movement', ()=>{ expect(false).toBeTruthy() })
   it('dice roll', ()=>{ expect(false).toBeTruthy() })
   it('piece movement', ()=>{ expect(false).toBeTruthy() })
 })
-describe('backend', ()=>{
+describe.skip('backend', ()=>{
   it('saves game state - every move', ()=>{ expect(false).toBeTruthy() })
   it('restore game state when opening a room', ()=>{ expect(false).toBeTruthy() })
   it('validate via move count - should always be sequential', ()=>{ expect(false).toBeTruthy() })

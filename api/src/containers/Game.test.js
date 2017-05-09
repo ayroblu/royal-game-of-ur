@@ -7,7 +7,7 @@ import Game from './Game'
 //  ReactDOM.render(<Home store={{}} />, div)
 //})
 
-describe('gameplay', ()=>{
+describe.skip('gameplay', ()=>{
   it('pieces and their movement', ()=>{ expect(false).toBeTruthy() })
   it('dice roll - 4 tetrahedral with 2 white points each', ()=>{ expect(false).toBeTruthy() })
   it('has squares for re rolls', ()=>{ expect(false).toBeTruthy() })

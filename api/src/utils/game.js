@@ -31,14 +31,11 @@ export function movePiecePos(pos=0, num=0){
   return pos + num
 }
 // top player is the opponent
-export function positionToCoords(pos=0, isTop=false){
+export function posToCoords(pos=0, isTop=false){
   // 0 is off the board
   if (pos === 0){
     return [-1, -1]
-  }
-  // 15 is off the board in the points pile
-  if (pos >= 15){
-    return [-2, -2]
+    //return [isTop? 0 : 2, 4]
   }
   if (pos > 0 && pos <= 4){
     return [isTop ? 0 : 2, 4-pos]
@@ -46,8 +43,10 @@ export function positionToCoords(pos=0, isTop=false){
   if (pos >= 5 && pos <= 12){
     return [1, pos - 5]
   }
-  if (pos >= 13 && pos <= 14){
+  // 15 is off the board in the points pile
+  if (pos >= 13 && pos <= 15){
     return [isTop ? 0 : 2, 20-pos]
   }
+  // Shouldn't really reach this
   return [-1, -1]
 }

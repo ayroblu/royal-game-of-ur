@@ -4,6 +4,11 @@ const initialState = {
   board: []
 , yourPieces: []
 , opponentPieces: []
+, boardDims: null
+, yourPoints: 0
+, opponentPoints: 0
+, isYourTurn: false
+, loading: true
 }
 
 export default function reducer(state=initialState, action) {

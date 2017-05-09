@@ -1,0 +1,9 @@
+.GamePiece{
+  position: absolute;
+  transform:translate3d(-50%,-50%, 0);
+  width: 30px;
+  height: 30px;
+  background-color: blue;
+  border-radius: 50%;
+  transition: all 0.3s;
+}

@@ -71,11 +71,11 @@ export class GraphQLApi extends Api{
     super(options)
     this.prefix = '/api'
   }
-  runQuery(query){
+  runQuery(query, variables){
     return fetch(this.apiUrl + this.prefix, {
       method: 'POST'
     , headers: this._postAuthedJsonHeaders()
-    , body: JSON.stringify({query})
+    , body: JSON.stringify({query, variables})
     }).then(this._handleStatus)
   }
 }
