@@ -171,7 +171,9 @@ export class GameEngine{
   // returns true if landed on a reroll
   _makeMove(playerPieces, move, isOpponent=false){
     const oldCoord = posToCoords(playerPieces[move.id].pos)
-    this.board[oldCoord[0]][oldCoord[1]].player = null
+    if (oldCoord[0] !== -1){
+      this.board[oldCoord[0]][oldCoord[1]].player = null
+    }
     playerPieces[move.id].pos = move.pos
     this.board[move.coord[0]][move.coord[1]].player = {
       id: move.id, playerId: move.playerId, pos: move.pos, isOpponent
@@ -272,6 +274,7 @@ export class GameEngine{
           this._switchTurn()
         }
         if (this.onBoardChange) this.onBoardChange()
+        this.availableMoves = null
       })
 
       while(this.availableMoves){

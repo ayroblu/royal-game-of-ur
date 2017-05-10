@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
+import {cn} from '../utils'
 import './PlayerArea.css'
 
 class PlayerArea extends Component {
@@ -8,13 +9,15 @@ class PlayerArea extends Component {
   , points: PropTypes.number.isRequired
   }
   render() {
-    const {points} = this.props
+    const {points, isOpponent} = this.props
     return (
-      <section className='PlayerArea'>
+      <section className={cn('PlayerArea', isOpponent && 'isOpponent')}>
         <div>
-          Pieces
+          <h2>Pieces</h2>
+          <div className='PiecesPot'>
+          </div>
         </div>
-        <div>Points: {points}</div>
+        <div className='points'>Points: {points}</div>
       </section>
     )
   }

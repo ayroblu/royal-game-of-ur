@@ -5,6 +5,7 @@ import _ from 'lodash'
 
 import GameBoard from '../components/GameBoard'
 import PlayerArea from '../components/PlayerArea'
+import FloatingActionButton from '../components/FloatingActionButton'
 import * as userActions from '../actions/user'
 import * as gameActions from '../actions/game'
 import * as mainActions from '../actions/main'
@@ -56,6 +57,10 @@ class Game extends Component {
     const gDim = _.chunk(gBlocks, 8)
     this.props.gameActions.set({boardDims: gDim, containerDim: cDim})
   }
+  _next = ()=>{
+    const {game} = this.props.game
+    this.props.gameActions.set({text: game.next().value})
+  }
   _renderLoading(){
     return (
       <div className='Game'>
@@ -68,7 +73,7 @@ class Game extends Component {
     //  loading, board, boardDims, containerDim, yourPoints, opponentPoints
     //, yourPlayerId, opponentPlayerId
     //} = this.props.game
-    const { loading, opponentPoints, yourPoints } = this.props.game
+    const { loading, opponentPoints, yourPoints, text } = this.props.game
     if (loading) return this._renderLoading()
     setTimeout(()=>this._getRenderedBoardPos())
     return (
@@ -81,6 +86,10 @@ class Game extends Component {
           />
         </div>
         <PlayerArea points={yourPoints}/>
+        <FloatingActionButton
+          text={text}
+          onClick={this._next}
+        />
       </div>
     )
   }

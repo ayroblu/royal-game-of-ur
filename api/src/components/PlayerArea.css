@@ -1,3 +1,22 @@
 .PlayerArea{
-  height: 100px;
+  height: 120px;
+  padding-top: 10px;
+  display: flex;
+  justify-content: center;
+}
+.PlayerArea h2{
+  font-size: 1rem;
+  font-weight: 300;
+  margin: 0;
+}
+.PlayerArea .PiecesPot{
+  width: 80px;
+  height: 80px;
+  background: #eee;
+}
+.PlayerArea > .points{
+  margin-left: 20px;
+}
+.PlayerArea.isOpponent{
+  background: #fee;
 }

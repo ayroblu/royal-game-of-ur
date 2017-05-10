@@ -20,4 +20,5 @@
 }
 .GameBlock.highlight{
   animation: glow 1s infinite alternate;
+  cursor: pointer;
 }

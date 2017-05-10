@@ -15,6 +15,7 @@ const initialState = {
 , isPreGame: false
 , isFirstPlayer: false
 , loading: true
+, text: ''
 }
 
 export default function reducer(state=initialState, action) {

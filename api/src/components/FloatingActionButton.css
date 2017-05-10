@@ -1,0 +1,28 @@
+.FloatingActionButton{
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  opacity: 0.4;
+  transition: all 0.2s;
+
+  display: flex;
+  align-items: center;
+}
+.FloatingActionButton:hover{
+  opacity: 1;
+}
+.FloatingActionButton > p{
+  margin-right: 20px;
+}
+.FloatingActionButton > button{
+  font-size: 0.9rem;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: none;
+  color: white;
+  background: #e55;
+  box-shadow: 2px 2px 6px rgba(0,0,0,0.4);
+  cursor: pointer;
+  outline: none;
+}
