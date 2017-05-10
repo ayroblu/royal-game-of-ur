@@ -12,7 +12,7 @@ export function createBoard(){
   return boardDef
 }
 export function createPlayerPieces(){
-  const pieces = Array(numPieces).fill().map(()=>({pos: 0}))
+  const pieces = Array(numPieces).fill().map((a,i)=>({pos: 0, id: i}))
   return pieces
 }
 // convention: path is linear, so pos is just a number from 0 to 15
@@ -96,6 +96,7 @@ export function highlightAvailableMoves(board, availableMoves){
     availableMoves.forEach(m=>{
       const c = m.coord
       board[c[0]][c[1]].onClick = ()=>{
+        console.log('click')
         y(m)
       }
     })
@@ -208,6 +209,20 @@ export class GameEngine{
     }
     return false
   }
+  getYourPieces(){
+    if (this._isFirstPlayer){
+      return this.firstPlayer.pieces
+    } else {
+      return this.secondPlayer.pieces
+    }
+  }
+  getOpponentPieces(){
+    if (this._isFirstPlayer){
+      return this.secondPlayer.pieces
+    } else {
+      return this.firstPlayer.pieces
+    }
+  }
   *gameplay(){
     while(!this.secondPlayer){
       yield 'Need second player'
@@ -257,10 +272,8 @@ export class GameEngine{
       const highlightPromise = highlightAvailableMoves(this.board, availableMoves)
       this.availableMoves = availableMoves
 
-      if (this.onBoardChange) this.onBoardChange()
-      yield availableMoves.length + ' moves highlighted'
-
       highlightPromise.then(move=>{
+        console.log('highlight')
         const reroll = this._makeMove(yourPieces, move)
         const isVictory = this._checkVictory()
         if (isVictory){
@@ -276,6 +289,9 @@ export class GameEngine{
         if (this.onBoardChange) this.onBoardChange()
         this.availableMoves = null
       })
+
+      if (this.onBoardChange) this.onBoardChange()
+      yield availableMoves.length + ' moves highlighted'
 
       while(this.availableMoves){
         yield 'Waiting for player to make a move'

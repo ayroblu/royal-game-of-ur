@@ -22,6 +22,7 @@ query ($id: String!){
 `
 class Game extends Component {
   componentWillMount(){
+    this.props.gameActions.reset()
     const {roomId} = this.props.match.params
     const {token} = this.props.user
     const api = new GraphQLApi({token})
@@ -42,7 +43,6 @@ class Game extends Component {
   }
   _initialiseGame(){
     const yourPlayerId = GameEngine.generateId()
-    console.log(yourPlayerId, GameEngine.generateId())
     const game = new GameEngine(yourPlayerId)
     game.onBoardChange = ()=>this.forceUpdate()
     window.game = game
@@ -59,7 +59,13 @@ class Game extends Component {
   }
   _next = ()=>{
     const {game} = this.props.game
-    this.props.gameActions.set({text: game.next().value})
+    if (game._hasStarted){
+      const yourPieces = game.getYourPieces()
+      const opponentPieces = game.getOpponentPieces()
+      this.props.gameActions.set({text: game.next().value, yourPieces, opponentPieces})
+    } else {
+      this.props.gameActions.set({text: game.next().value})
+    }
   }
   _renderLoading(){
     return (
