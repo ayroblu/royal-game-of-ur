@@ -13,7 +13,7 @@ class GameBlock extends Component {
   , onClick: PropTypes.func
   }
   render() {
-    const {empty, reroll, invulnerable} = this.props
+    const {empty, reroll, invulnerable, onClick} = this.props
     let text = ''
     if (invulnerable) text+= 'Invulnerable'
     if (invulnerable && reroll) text+= '\n'

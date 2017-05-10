@@ -1,5 +1,8 @@
+import _ from 'lodash'
+
 export const numDie = 4
 export const numPieces = 7
+
 export function createBoard(){
   const boardDef = [
     [{reroll: true}, {}, {}, {}, {empty: true}, {empty: true}, {reroll: true}, {}]
@@ -55,7 +58,7 @@ export function rollDie(){
   return die
 }
 // will never be opponent
-export function availableMoves(board, playerPieces, diceResult, currentPlayerId = null){
+export function getAvailableMoves(board, playerPieces, diceResult, currentPlayerId = null){
   if (diceResult === 0) return []
   const history = []
   const moves = playerPieces.map((p, i)=>{
@@ -71,7 +74,7 @@ export function availableMoves(board, playerPieces, diceResult, currentPlayerId 
       return null
     }
     history.push(endPos)
-    return {coord: c, pos: endPos, id: i}
+    return {coord: c, pos: endPos, id: i, playerId: currentPlayerId}
   }).filter(p=>p)
   return moves
 }
@@ -84,6 +87,20 @@ export function checkVictory(points){
 export function checkReroll(board, coords){
   return !!board[coords[0]][coords[1]].reroll
 }
+export function getBoardBlock(board, coord){
+  return board[coord[0]][coord[1]]
+}
+export function highlightAvailableMoves(board, availableMoves){
+  _.flatten(board).forEach(b=>b.onClick = null)
+  return new Promise(y=>{
+    availableMoves.forEach(m=>{
+      const c = m.coord
+      board[c[0]][c[1]].onClick = ()=>{
+        y(m)
+      }
+    })
+  })
+}
 function gameMoves(){
   //Decide who starts
   //loop
@@ -95,21 +112,22 @@ function gameMoves(){
   //  switch turns
   //endloop
 }
-class GameEngine{
+export class GameEngine{
   constructor(yourId, game){
     this._playerTurn = 0 //1 is player 1, 2 is player 2
+    this._victor = null
     if (game){
       const {board, firstPlayerPieces, secondPlayerPieces
       , firstPlayerId, firstPlayerName, secondPlayerId, secondPlayerName, playerTurn} = game
       this.board = board
       this.firstPlayer = {
-        id: firstPlayerid
+        id: firstPlayerId
       , pieces: firstPlayerPieces
       , name: firstPlayerName
       }
       if (secondPlayerId){
         this.secondPlayer = {
-          id: secondPlayerid
+          id: secondPlayerId
         , pieces: secondPlayerPieces
         , name: secondPlayerName
         }
@@ -124,18 +142,18 @@ class GameEngine{
       this._hasStarted = true
     } else {
       this._hasStarted = false
-      this._initialiseBoard()
+      this._initialiseBoard(yourId)
     }
     this._yourId = yourId
     this.game = this.gameplay()
   }
-  _generateId(){
+  static generateId(){
     return Math.random().toString(36).substr(2)
   }
-  _initialiseBoard(){
+  _initialiseBoard(yourId){
     this.board = createBoard()
     this.firstPlayer = {
-      id: Math.random().toString(36).substr(2)
+      id: yourId
     , pieces: createPlayerPieces()
     , name: 'Player 1'
     }
@@ -147,16 +165,56 @@ class GameEngine{
     , pieces: createPlayerPieces()
     }
   }
+  _switchTurn(){
+    this._playerTurn = this._playerTurn === 1 ? 2 : 1
+  }
+  // returns true if landed on a reroll
+  _makeMove(playerPieces, move, isOpponent=false){
+    const oldCoord = posToCoords(playerPieces[move.id].pos)
+    this.board[oldCoord[0]][oldCoord[1]].player = null
+    playerPieces[move.id].pos = move.pos
+    this.board[move.coord[0]][move.coord[1]].player = {
+      id: move.id, playerId: move.playerId, pos: move.pos, isOpponent
+    }
+    _.flatten(this.board).forEach(b=>b.onClick = null)
+    return !!this.board[move.coord[0]][move.coord[1]].reroll
+    // board piece has {player:{id: 0, playerId: '', pos: 3, isOpponent: false}}
+  }
+  _checkVictory(){
+    //return false for no, 1 for player 1, 2 for player 2
+    const firstPoints = checkPoints(this.firstPlayer.pieces)
+    if (checkVictory(firstPoints)){
+      return 1
+    }
+    const secondPoints = checkPoints(this.secondPlayer.pieces)
+    if (checkVictory(secondPoints)){
+      return 2
+    }
+    return false
+  }
+  opponentsMove(move){
+    const pieces = this._isFirstPlayer
+      ? this.secondPlayer.pieces
+      : this.firstPlayer.pieces
+    const reroll = this._makeMove(pieces, move, true)
+    const isVictory = this._checkVictory()
+    if (isVictory){
+      return 'Congrats to player '+isVictory+'!'
+    }
+    if (!reroll){
+      this._switchTurn()
+    }
+    return false
+  }
   *gameplay(){
     while(!this.secondPlayer){
       yield 'Need second player'
     }
     while (!this._hasStarted){
       if (this._yourId === this.firstPlayer.id){
-        yield ()=>{
-          this._playerTurn = decideStart() ? 1 : 2
-          this._hasStarted = true
-        }
+        yield 'Decide who starts'
+        this._playerTurn = decideStart() ? 1 : 2
+        this._hasStarted = true
       } else {
         yield 'Waiting for deciding who starts'
       }
@@ -164,11 +222,58 @@ class GameEngine{
     if (this._yourId === this.firstPlayer.id){
       this._isFirstPlayer = true
     }
-    while(true){
+    // just in case returning to completed game
+    const isVictory = this._checkVictory()
+    if (isVictory){
+      yield 'Congrats to player '+isVictory+'!'
+      return
+    }
+
+    while(!this._victor){
       while(this._playerTurn !== (this._isFirstPlayer ? 1 : 2)){
         yield 'Not your turn'
       }
-      yield 'Your turn'
+      yield 'Your turn, roll the dice'
+      const die = rollDie()
+      const diceResult = die.reduce((a,n)=>a+n, 0)
+      this.lastDie = die
+      // highlight available moves
+      
+      const yourPieces = this._isFirstPlayer
+        ? this.firstPlayer.pieces
+        : this.secondPlayer.pieces
+      const availableMoves = getAvailableMoves(this.board, yourPieces, diceResult, this._yourId)
+      if (!availableMoves.length){
+        yield 'No moves, switch turn'
+        this._switchTurn()
+        continue
+        
+        // tell server to opponent's turn
+        // this.props.gameActions.set({isYourTurn: false})
+        // continue
+      }
+      const highlightPromise = highlightAvailableMoves(this.board, availableMoves)
+      this.availableMoves = availableMoves
+      yield availableMoves.length + ' moves highlighted'
+
+      highlightPromise.then(move=>{
+        const reroll = this._makeMove(yourPieces, move)
+        const isVictory = this._checkVictory()
+        if (isVictory){
+          console.log('Congrats to player '+isVictory+'!')
+          this._victor = isVictory
+        }
+        if (reroll){
+          //yield 'Reroll!'
+        } else {
+          //yield 'Move made, end turn'
+          this._switchTurn()
+        }
+      })
+
+      while(this.availableMoves){
+        yield 'Waiting for player to make a move'
+      }
     }
     // so a player's move causes a game state save
   }

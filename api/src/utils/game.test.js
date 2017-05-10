@@ -4,10 +4,11 @@ import {
 , posToCoords
 , decideStart
 , rollDie
-, availableMoves
+, getAvailableMoves
 , checkPoints
 , checkVictory
 , checkReroll
+, GameEngine
 , numPieces
 } from './game'
 
@@ -42,8 +43,8 @@ describe('Game play', ()=>{
   it('has initial move', ()=>{
     const board = createBoard()
     const pieces = createPlayerPieces()
-    const move = availableMoves(board, pieces, 2)
-    expect(move).toEqual([{coord: [2,2], pos: 2, id: 0}])
+    const move = getAvailableMoves(board, pieces, 2, 'myid')
+    expect(move).toEqual([{coord: [2,2], pos: 2, id: 0, playerId: 'myid'}])
   })
   it('has initial points check', ()=>{
     const pieces = createPlayerPieces()
@@ -69,13 +70,26 @@ describe('Game play', ()=>{
     expect(checkReroll(board, [2,1])).toEqual(false)
   })
 })
-function* thing(){
-  yield 'hi'
-  yield 'cute'
-}
-it('can run test', ()=>{
-  const a = thing()
-  console.log(a.next())
-  console.log(a.next())
-  console.log(a.next())
+describe('Game run through', ()=>{
+  const yourId = GameEngine.generateId()
+  const opponentId = GameEngine.generateId()
+  const gameEngine = new GameEngine(yourId)
+  expect(gameEngine.next().value).toBe('Need second player')
+  gameEngine.addSecondPlayer({id: opponentId, name: 'Player 2'})
+  let lastText = gameEngine.next().value
+  console.log(lastText)
+  lastText = gameEngine.next().value
+  console.log(lastText)
+  console.log('playerturn', gameEngine._playerTurn, gameEngine._isFirstPlayer)
+  const isNotMyTurn = /Not your/.test(lastText)
+  if (isNotMyTurn){
+    console.log('switch turns')
+    gameEngine._switchTurn()
+    lastText = gameEngine.next().value
+    console.log(lastText)
+  }
+  lastText = gameEngine.next().value
+  console.log(lastText)
+  console.log('player turn', gameEngine._playerTurn, gameEngine._isFirstPlayer)
+  console.log('lastDie', gameEngine.lastDie, 'availableMoves', gameEngine.availableMoves)
 })

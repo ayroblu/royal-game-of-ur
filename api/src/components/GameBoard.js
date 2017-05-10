@@ -31,7 +31,7 @@ class GameBoard extends Component {
     this.poss = 0
   }
   render() {
-    const {board, boardDims, containerDim, yourPieces, opponentPieces, yourPlayerId} = this.props
+    const {board, boardDims, containerDim, yourPieces, opponentPieces, yourPlayerId, opponentPlayerId} = this.props
     if (boardDims){
       var pieces = yourPieces.filter(p=>p.pos > 0 && p.pos < 15)
         .map(p=>({id: p.id, playerId: yourPlayerId, pos: posToCoords(p.pos)}))
