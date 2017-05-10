@@ -4,10 +4,16 @@ const initialState = {
   board: []
 , yourPieces: []
 , opponentPieces: []
+, yourPlayerId: null
+, opponentPlayerId: null
+, yourPlayerName: null
+, opponentPlayerName: null
 , boardDims: null
 , yourPoints: 0
 , opponentPoints: 0
 , isYourTurn: false
+, isPreGame: false
+, isFirstPlayer: false
 , loading: true
 }
 

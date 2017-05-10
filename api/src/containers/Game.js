@@ -9,7 +9,7 @@ import * as userActions from '../actions/user'
 import * as gameActions from '../actions/game'
 import * as mainActions from '../actions/main'
 import './Game.css'
-import {createBoard, createPlayerPieces} from '../utils/game'
+import * as game from '../utils/game'
 import {GraphQLApi} from '../api'
 
 const query = `
@@ -40,10 +40,12 @@ class Game extends Component {
     })
   }
   _initialiseBoard(){
-    const board = createBoard()
-    const yourPieces = createPlayerPieces()
-    const opponentPieces = createPlayerPieces()
-    this.props.gameActions.set({board, yourPieces, opponentPieces})
+    const board = game.createBoard()
+    const yourPieces = game.createPlayerPieces()
+    const opponentPieces = game.createPlayerPieces()
+    this.props.gameActions.set({loading: false, board, yourPieces, opponentPieces, isPreGame: true, isFirstPlayer: true})
+    // save to server
+    // Only the one who creates the room initialises the board
   }
   _getRenderedBoardPos(){
     if (this.props.game.boardDims){
@@ -64,8 +66,59 @@ class Game extends Component {
       </div>
     )
   }
+  async _gameEngine(){
+    const {board, yourPieces, opponentPieces, isYourTurn, isPreGame, yourPlayerId} = this.props.game
+    if (isPreGame){
+      const iStart = game.decideStart()
+      if (iStart){
+        this.props.gameActions.set({isYourTurn: true, isPreGame: false})
+      } else {
+        this.props.gameActions.set({isPreGame: false})
+      }
+      // make call here
+    }
+    //while (true){
+    //}
+    // wait for user to roll dice with action
+    const diceRoll = game.rollDie()
+    // show on screen
+    const diceResult = diceRoll.reduce((a,n)=>a+(n?1:0),0)
+    const availableMoves = game.availableMoves(board, yourPieces, diceResult, yourPlayerId)
+    if (!availableMoves.length){
+      // tell server to opponent's turn
+      // this.props.gameActions.set({isYourTurn: false})
+      // continue
+    }
+    _.flatten(board).forEach(b=>b.onClick = null)
+    availableMoves.forEach(m=>{
+      const c = m.coord
+      board[c[0]][c[1]].onClick = ()=>{
+        console.log('make move')
+        const oldCoord = game.posToCoord(yourPieces[m.id].pos)
+        board[oldCoord[0]][oldCoord[1]].player = null
+        yourPieces[m.id].pos = m.pos
+        board[m.coord[0]][m.coord[1]].player = {id: m.id, playerId}
+    // board piece has {player:{id: 0, playerId: '', pos: 3, isOpponent: false}}
+        _.flatten(board).forEach(b=>b.onClick = null)
+      }
+    })
+    function gameMoves(){
+      //Decide who starts
+      //loop
+      //  roll dice
+      //  move piece
+      //  check points
+      //  check victory
+      //  if (piece lands on reroll) continue
+      //  switch turns
+      //endloop
+    }
+  }
   render() {
-    const {loading, board, boardDims, containerDim, yourPoints, opponentPoints} = this.props.game
+    const {
+      loading, board, boardDims, containerDim, yourPoints, opponentPoints
+    , yourPlayerId, opponentPlayerId
+    } = this.props.game
     if (loading) return this._renderLoading()
     setTimeout(()=>this._getRenderedBoardPos())
     return (
@@ -73,10 +126,8 @@ class Game extends Component {
         <PlayerArea points={opponentPoints} isOpponent={true}/>
         <div className='flexGrow'>
           <GameBoard
-            board={board}
+            {...this.props.game}
             setGameBoard={board=>this.props.gameActions.set({board})}
-            boardDims={boardDims}
-            containerDim={containerDim}
           />
         </div>
         <PlayerArea points={yourPoints}/>

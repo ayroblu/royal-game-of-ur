@@ -107,6 +107,21 @@ CREATE INDEX session__when_added ON session (when_added);
 CREATE INDEX session__when_updated ON session (when_updated);
 CREATE INDEX session__when_expire ON session (when_expire);
 
+CREATE TABLE game (
+  game_id UUID PRIMARY KEY DEFAULT uuid_generate_v1mc()
+, board TEXT NOT NULL
+, first_player_pieces TEXT NOT NULL
+, second_player_pieces TEXT NOT NULL
+, first_player_id TEXT NOT NULL
+, second_player_id TEXT NOT NULL
+, when_added TIMESTAMP NOT NULL DEFAULT NOW()
+, when_updated TIMESTAMP NOT NULL DEFAULT NOW()
+);
+CREATE INDEX game__first_player_id ON game (first_player_id);
+CREATE INDEX game__second_player_id ON game (second_player_id);
+CREATE INDEX game__when_added ON game (when_added);
+CREATE INDEX game__when_updated ON game (when_updated);
+
 -- Only for Mobile apps - google fcm --
 ---------------------------------------
 --CREATE TABLE push_notification (

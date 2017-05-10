@@ -14,3 +14,10 @@
 }
 .GameBlock.invulnerable{
 }
+@keyframes glow{
+  from{background-color: #ff0}
+  to{background-color: #ee8}
+}
+.GameBlock.highlight{
+  animation: glow 1s infinite alternate;
+}

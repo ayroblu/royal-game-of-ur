@@ -30,6 +30,7 @@
     "morgan": "^1.8.1",
     "node-fetch": "^1.5.1",
     "nodemon": "^1.9.1",
+    "pg": "^6.1.5",
     "react": "^15.5.4",
     "react-dom": "^15.5.4",
     "react-redux": "^5.0.4",

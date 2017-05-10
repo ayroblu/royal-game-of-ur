@@ -13,6 +13,8 @@ class GameBoard extends Component {
   , setGameBoard: PropTypes.func.isRequired
   , boardDims: PropTypes.array
   , containerDims: PropTypes.array
+  , yourPieces: PropTypes.array
+  , opponentPieces: PropTypes.array
   }
   _changeBoard = pos=>{
     const {board} = this.props
@@ -29,17 +31,20 @@ class GameBoard extends Component {
     this.poss = 0
   }
   render() {
-    const {board, boardDims, containerDim} = this.props
+    const {board, boardDims, containerDim, yourPieces, opponentPieces, yourPlayerId} = this.props
     if (boardDims){
-      var pieces = _.flatten(board).filter(b=>b.player).map(b=>b.player)
-        .map(p=>({id: p.id, pos: posToCoords(p.pos)}))
-        .map(c=>({
+      var pieces = yourPieces.filter(p=>p.pos > 0 && p.pos < 15)
+        .map(p=>({id: p.id, playerId: yourPlayerId, pos: posToCoords(p.pos)}))
+        .concat(opponentPieces.filter(p=>p.pos > 0 && p.pos < 15)
+          .map(p=>({id: p.id, playerId: opponentPlayerId, pos: posToCoords(p.pos, true)}))
+        ).map(c=>({
           id: c.id
+        , isOpponent: c.playerId === yourPlayerId
         , left: boardDims[c.pos[0]][c.pos[1]].left + boardDims[c.pos[0]][c.pos[1]].width/2 - containerDim.left
         , top: boardDims[c.pos[0]][c.pos[1]].top + boardDims[c.pos[0]][c.pos[1]].height/2 - containerDim.top
         }))
     }
-    // board piece has {player:{pieceId: 0, pos: 3, isOpponent: false}}
+    // board piece has {player:{id: 0, playerId: '', pos: 3, isOpponent: false}}
     return (
       <div className='GameBoard'>
         {board.map((row, i)=>(
@@ -50,7 +55,7 @@ class GameBoard extends Component {
         </div>
         ))}
         {!!boardDims && pieces.map(p=>(
-        <GamePiece key={p.id} left={p.left} top={p.top}/>
+        <GamePiece key={p.id} left={p.left} top={p.top} isOpponent={p.isOpponent}/>
         ))}
       </div>
     )

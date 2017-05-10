@@ -9,19 +9,26 @@ const type = {
   name: 'Game'
 , description: 'These are the saved games that are in your database'
 , fields: ()=>({
-    firstName: {
+    board: {type: GraphQLString}
+  , firstPlayerPieces: {
       type: GraphQLString
-    , resolve: ({first_name})=>first_name
+    , resolve: ({first_player_pieces})=>first_player_pieces
     }
-  , name: {type: GraphQLString}
-  , friends: {
-      type: new GraphQLList(PersonType)
-    , resolve: ({friends}, args, {loaders})=>{
-        return loaders.person.loadMany(friends)
-        //return db.filter(d=>friends.map(f=>f.id).includes(d.id))
-      }
+  , secondPlayerPieces: {
+      type: GraphQLString
+    , resolve: ({second_player_pieces})=>second_player_pieces
+    }
+  , firstPlayerIp: {
+      type: GraphQLString
+    , resolve: ({first_player_ip})=>first_player_ip
+    }
+  , secondPlayerIp: {
+      type: GraphQLString
+    , resolve: ({second_player_ip})=>second_player_ip
     }
   })
 }
 export const GameType = new GraphQLObjectType(type)
 
+// Games have the whole board + first player + second player piece positions
+// points can be determined from the pieces

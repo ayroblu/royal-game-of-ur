@@ -19,7 +19,7 @@ class GameBlock extends Component {
     if (invulnerable && reroll) text+= '\n'
     if (reroll) text+= 'Reroll'
     return (
-      <div className={cn('GameBlock', !!empty && 'empty', !!reroll && 'reroll', !!invulnerable && 'invulnerable')} onClick={this.props.onClick}>
+      <div className={cn('GameBlock', !!empty && 'empty', !!reroll && 'reroll', !!invulnerable && 'invulnerable', !!onClick && 'highlight')} onClick={this.props.onClick}>
         <div>{text}</div>
       </div>
     )

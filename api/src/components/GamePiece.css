@@ -7,3 +7,6 @@
   border-radius: 50%;
   transition: all 0.3s;
 }
+.GamePiece.isOpponent{
+  background-color: red;
+}

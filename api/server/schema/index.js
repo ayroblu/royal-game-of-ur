@@ -27,7 +27,7 @@ const QueryType = new GraphQLObjectType({
         return loaders.person.load(person)
       }
     }
-  , person: {
+  , game: {
       type: GameType
     , description: 'Get a saved game'
     , args: {
