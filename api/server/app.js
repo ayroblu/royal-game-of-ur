@@ -13,8 +13,10 @@ import index from './routes/index'
 import api from './routes/api'
 import universalLoader from './universal'
 
-
 const app = express()
+
+var server = require('http').createServer(app)
+require('./socket')(server)
 
 // Support Gzip
 app.use(compression())
@@ -36,4 +38,4 @@ app.use('/api', api)
 // Always return the main index.html, so react-router render the route in the client
 app.use('/', universalLoader)
 
-export default app
+export default server

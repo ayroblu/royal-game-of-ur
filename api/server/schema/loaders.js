@@ -10,7 +10,7 @@ const personLoader = new DataLoader(people=>{
     people.map(({id, firstName})=>tempdb.find(d=>d.id===id || d.first_name===firstName)))
 })
 const gameLoader = new DataLoader(games=>{
-  return db.getGames(games)
+  return Promise.resolve(db.getGames(games.map(g=>g.id)))
 })
 const loaders = {
   person: personLoader

@@ -3,11 +3,13 @@ import {
 , GraphQLObjectType
 , GraphQLString
 , GraphQLInt
+, GraphQLNonNull
 , GraphQLList
 } from 'graphql'
+import {snakeCaseObject} from '../utils/rename'
 
 import {PersonType, PersonInputType} from './PersonType'
-import {GameType} from './GameType'
+import {GameType, GameInputType} from './GameType'
 
 const QueryType = new GraphQLObjectType({
   name: 'Query'
@@ -53,6 +55,27 @@ const MutationType = new GraphQLObjectType({
       }
     , resolve: (root, person, {mutators}, ast)=>{
         return mutators.person.create(person)
+      }
+    }
+  , createGame: {
+      type: GameType
+    , description: 'Creates a game'
+    , args: {
+        game: {type: GameInputType}
+      }
+    , resolve: (root, {game}, {mutators}, ast)=>{
+        return mutators.game.create(snakeCaseObject(game))
+      }
+    }
+  , updateGame: {
+      type: GameType
+    , description: 'Updates a game'
+    , args: {
+        gameId: {type: new GraphQLNonNull(GraphQLString)}
+      , game: {type: GameInputType}
+      }
+    , resolve: (root, {gameId, game}, {mutators}, ast)=>{
+        return mutators.game.update(gameId, snakeCaseObject(game))
       }
     }
   })

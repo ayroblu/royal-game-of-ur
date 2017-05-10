@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import _ from 'lodash'
 
+import socket from '../utils/socket'
 import GameBoard from '../components/GameBoard'
 import PlayerArea from '../components/PlayerArea'
 import FloatingActionButton from '../components/FloatingActionButton'
@@ -16,7 +17,26 @@ import {GraphQLApi} from '../api'
 const query = `
 query ($id: String!){
   game(id:$id){
+    gameId
     board
+    firstPlayerId
+    firstPlayerName
+    firstPlayerPieces
+    secondPlayerId
+    secondPlayerName
+    secondPlayerPieces
+  }
+}
+`
+
+const addQuery = `
+mutation CreateGame($game: GameInput!){
+  createGame(game: $game){
+    gameId
+    board
+    firstPlayerId
+    firstPlayerName
+    firstPlayerPieces
   }
 }
 `
@@ -27,14 +47,18 @@ class Game extends Component {
     const {token} = this.props.user
     const api = new GraphQLApi({token})
     const variables = JSON.stringify({id: roomId})
+    console.log('init')
     api.runQuery(query, variables).then(res=>{
+      console.log('first res', res)
       if (!res){
         console.log('Invalid query')
         this.props.mainActions.set({errorText: 'Invalid query'})
       } else if (!res.data.game){
+        console.log('initialise')
         this._initialiseGame()
       } else {
         console.log('restore')
+        this._restore(res.data.game)
       }
     }).catch(err=>{
       console.log('Error', err)
@@ -43,9 +67,39 @@ class Game extends Component {
   }
   _initialiseGame(){
     const yourPlayerId = GameEngine.generateId()
+    window.localStorage.setItem('playerId', yourPlayerId)
     const game = new GameEngine(yourPlayerId)
     game.onBoardChange = ()=>this.forceUpdate()
     window.game = game
+    this.socket = socket(game)
+    this.props.gameActions.set({game, loading: false, board: game.board, yourPlayerId})
+
+    const {roomId: gameId} = this.props.match.params
+    const {id: firstPlayerId, name: firstPlayerName, pieces: firstPlayerPieces} = game.firstPlayer
+    const variables = JSON.stringify({game: {
+      gameId, board: JSON.stringify(game.board)
+      , firstPlayerId, firstPlayerName, firstPlayerPieces: JSON.stringify(firstPlayerPieces)
+    }})
+    const {token} = this.props.user
+    const api = new GraphQLApi({token})
+    api.runQuery(addQuery, variables).then(res=>{
+      console.log('res', res)
+    }).catch(err=>{
+      console.log('Error', err)
+      this.props.mainActions.set({errorText: 'Connection error'})
+    })
+  }
+  _restore(res){
+    const yourPlayerId = window.localStorage.getItem('playerId')
+    const game = new GameEngine(yourPlayerId, {
+      ...res
+    , board: JSON.parse(res.board)
+    , firstPlayerPieces: JSON.parse(res.firstPlayerPieces)
+    , secondPlayerPieces: res.secondPlayerId && JSON.parse(res.secondPlayerPieces)
+    })
+    game.onBoardChange = ()=>this.forceUpdate()
+    window.game = game
+    this.socket = socket(game)
     this.props.gameActions.set({game, loading: false, board: game.board, yourPlayerId})
   }
   _getRenderedBoardPos(){

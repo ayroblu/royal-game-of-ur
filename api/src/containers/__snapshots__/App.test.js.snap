@@ -1,5 +1,30 @@
 exports[`test renders correctly 1`] = `
 <div>
-  Loading
+  <div
+    className="Home">
+    <h1>
+      Home Page
+    </h1>
+    <p>
+      This is a placeholder
+    </p>
+    <p>
+      I want this to be a user\'s dashboard, so list of events and links
+    </p>
+  </div>
+  <div>
+    <a
+      href="/game/1"
+      onClick={[Function]}>
+      Game
+    </a>
+  </div>
+  <div>
+    <a
+      href="/"
+      onClick={[Function]}>
+      Home
+    </a>
+  </div>
 </div>
 `;

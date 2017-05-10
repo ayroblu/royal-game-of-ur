@@ -108,12 +108,15 @@ CREATE INDEX session__when_updated ON session (when_updated);
 CREATE INDEX session__when_expire ON session (when_expire);
 
 CREATE TABLE game (
-  game_id UUID PRIMARY KEY DEFAULT uuid_generate_v1mc()
+  game_id CITEXT PRIMARY KEY
 , board TEXT NOT NULL
-, first_player_pieces TEXT NOT NULL
-, second_player_pieces TEXT NOT NULL
+, playerTurn INT NOT NULL DEFAULT 0
 , first_player_id TEXT NOT NULL
-, second_player_id TEXT NOT NULL
+, first_player_name TEXT NOT NULL
+, first_player_pieces TEXT NOT NULL
+, second_player_id TEXT
+, second_player_name TEXT
+, second_player_pieces TEXT
 , when_added TIMESTAMP NOT NULL DEFAULT NOW()
 , when_updated TIMESTAMP NOT NULL DEFAULT NOW()
 );
@@ -143,7 +146,7 @@ DO $$ BEGIN
       BEFORE UPDATE ON ' || quote_ident(t) || '
       FOR EACH ROW EXECUTE PROCEDURE set_updated_timestamp();
   ', E'\n')
-FROM unnest('{person, person_display_image, image, reset_code, session}'::text[]) t -- list your tables here
+FROM unnest('{person, person_display_image, image, reset_code, session, game}'::text[]) t -- list your tables here
   );
 END $$;
 
@@ -158,6 +161,7 @@ GRANT SELECT, INSERT ON person_display_image TO regular_user;
 GRANT SELECT, INSERT ON image TO regular_user;
 GRANT SELECT, INSERT, UPDATE ON reset_code TO regular_user;
 GRANT SELECT, INSERT, DELETE ON session TO regular_user;
+GRANT SELECT, INSERT, UPDATE, DELETE ON game TO regular_user;
 --GRANT SELECT, INSERT, DELETE ON push_notification TO regular_user;
 
 -- When you don't want to worry about sequences

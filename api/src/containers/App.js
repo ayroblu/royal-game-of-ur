@@ -9,25 +9,25 @@ import NoMatch from '../components/NoMatch'
 
 import * as userActions from '../actions/user'
 import * as mainActions from '../actions/main'
-import {GraphQLApi} from '../api'
+//import {GraphQLApi} from '../api'
 
-const query = `
-{
-  person(id:8){
-    firstName
-  }
-}
-`
+//const query = `
+//{
+//  person(id:8){
+//    firstName
+//  }
+//}
+//`
 class App extends Component {
   componentWillMount(){
-    const api = new GraphQLApi()
-    api.runQuery(query).then(res=>{
-      console.log(res)
-      this.props.mainActions.set({loading: false})
-    }).catch(err=>{
-      console.error('Connection error', err)
-      this.props.mainActions.set({loading: false, errorText: 'Connection error'})
-    })
+    //const api = new GraphQLApi()
+    //api.runQuery(query).then(res=>{
+    //  console.log(res)
+    //  this.props.mainActions.set({loading: false})
+    //}).catch(err=>{
+    //  console.error('Connection error', err)
+    //  this.props.mainActions.set({loading: false, errorText: 'Connection error'})
+    //})
   }
   _renderLoading(){
     return (

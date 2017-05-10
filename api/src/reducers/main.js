@@ -1,7 +1,7 @@
 import { SET, RESET } from '../types/main'
 
 const initialState = {
-  loading: true
+  loading: false
 , errorText: ''
 }
 
