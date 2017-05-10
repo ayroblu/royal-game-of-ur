@@ -50,7 +50,7 @@ class GameBoard extends Component {
         {board.map((row, i)=>(
         <div key={i} className='row'>
           {row.map((b, k)=>(
-          <GameBlock key={k} {...b} onClick={()=>this._changeBoard(++this.poss)} />
+          <GameBlock key={k} {...b} onClick={b.onClick} />
           ))}
         </div>
         ))}

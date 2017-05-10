@@ -101,17 +101,17 @@ export function highlightAvailableMoves(board, availableMoves){
     })
   })
 }
-function gameMoves(){
-  //Decide who starts
-  //loop
-  //  roll dice
-  //  move piece
-  //  check points
-  //  check victory
-  //  if (piece lands on reroll) continue
-  //  switch turns
-  //endloop
-}
+//function gameMoves(){
+//  //Decide who starts
+//  //loop
+//  //  roll dice
+//  //  move piece
+//  //  check points
+//  //  check victory
+//  //  if (piece lands on reroll) continue
+//  //  switch turns
+//  //endloop
+//}
 export class GameEngine{
   constructor(yourId, game){
     this._playerTurn = 0 //1 is player 1, 2 is player 2
@@ -254,6 +254,8 @@ export class GameEngine{
       }
       const highlightPromise = highlightAvailableMoves(this.board, availableMoves)
       this.availableMoves = availableMoves
+
+      if (this.onBoardChange) this.onBoardChange()
       yield availableMoves.length + ' moves highlighted'
 
       highlightPromise.then(move=>{
@@ -269,6 +271,7 @@ export class GameEngine{
           //yield 'Move made, end turn'
           this._switchTurn()
         }
+        if (this.onBoardChange) this.onBoardChange()
       })
 
       while(this.availableMoves){
