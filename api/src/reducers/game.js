@@ -2,6 +2,8 @@ import { SET, RESET } from '../types/game'
 
 const initialState = {
   board: []
+, yourPieces: []
+, opponentPieces: []
 , yourPlayerId: null
 , opponentPlayerId: null
 , yourPlayerName: null
