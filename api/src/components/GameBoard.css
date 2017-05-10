@@ -1,7 +1,15 @@
 .GameBoard{
   position: relative;
+  display:flex;
+  justify-content: center;
 }
-.GameBoard > .row{
+.GameBoard > .mainBoard > .row{
   display: flex;
   justify-content: center;
+}
+.GameBoard > .dice{
+  margin-left: 40px;
+}
+.GameBoard > .dice h2{
+  font-weight: 400;
 }

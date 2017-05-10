@@ -59,15 +59,20 @@ export function rollDie(){
 }
 // will never be opponent
 export function getAvailableMoves(board, playerPieces, diceResult, currentPlayerId = null){
+  console.log('getAvailMoves', board, playerPieces, diceResult, currentPlayerId)
   if (diceResult === 0) return []
   const history = []
   const moves = playerPieces.map((p, i)=>{
-    const endPos = p.pos + diceResult
+    let endPos = p.pos + diceResult
     if (endPos > 15) {
       return null
     }
+    const bb = getBoardBlock(board, posToCoords(endPos))
+    if (bb.player && bb.player.id !== currentPlayerId && bb.invulnerable){
+      ++endPos
+    }
     const c = posToCoords(endPos)
-    if (board[c[0]][c[1]].player && board[c[0]][c[1]].player.id !== currentPlayerId){
+    if (board[c[0]][c[1]].player && board[c[0]][c[1]].player.playerId === currentPlayerId){
       return null
     }
     if (history.includes(endPos)){
@@ -132,7 +137,7 @@ export class GameEngine{
         , pieces: secondPlayerPieces
         , name: secondPlayerName
         }
-      } else {
+      } else if (yourId !== firstPlayerId) {
         this.secondPlayer = {
           id: yourId
         , pieces: createPlayerPieces()
@@ -140,13 +145,17 @@ export class GameEngine{
         }
       }
       this._playerTurn = playerTurn
-      this._hasStarted = true
+      this._hasStarted = playerTurn !== 0
     } else {
       this._hasStarted = false
       this._initialiseBoard(yourId)
     }
     this._yourId = yourId
     this.game = this.gameplay()
+
+    if (this._yourId === this.firstPlayer.id){
+      this._isFirstPlayer = true
+    }
   }
   static generateId(){
     return Math.random().toString(36).substr(2)
@@ -168,18 +177,26 @@ export class GameEngine{
   }
   _switchTurn(){
     this._playerTurn = this._playerTurn === 1 ? 2 : 1
+    if (this.onEvent) this.onEvent({type: 'switch-turns', playerTurn: this._playerTurn})
   }
   // returns true if landed on a reroll
-  _makeMove(playerPieces, move, isOpponent=false){
-    const oldCoord = posToCoords(playerPieces[move.id].pos)
+  _makeMove(playerPieces, otherPlayerPieces, move, isOpponent=false){
+    const oldCoord = posToCoords(playerPieces[move.id].pos, isOpponent)
     if (oldCoord[0] !== -1){
       this.board[oldCoord[0]][oldCoord[1]].player = null
     }
     playerPieces[move.id].pos = move.pos
+
+    // remove other player's piece
+    if (this.board[move.coord[0]][move.coord[1]].player){
+      const op = this.board[move.coord[0]][move.coord[1]].player
+      otherPlayerPieces[op.id].pos = 0
+    }
     this.board[move.coord[0]][move.coord[1]].player = {
       id: move.id, playerId: move.playerId, pos: move.pos, isOpponent
     }
     _.flatten(this.board).forEach(b=>b.onClick = null)
+    if (this.onEvent && !isOpponent) this.onEvent({type: 'make-move', move})
     return !!this.board[move.coord[0]][move.coord[1]].reroll
     // board piece has {player:{id: 0, playerId: '', pos: 3, isOpponent: false}}
   }
@@ -195,11 +212,34 @@ export class GameEngine{
     }
     return false
   }
-  opponentsMove(move){
+  getYourPoints(){
+    const pieces = this._isFirstPlayer
+      ? this.firstPlayer.pieces
+      : this.secondPlayer.pieces
+    return checkPoints(pieces)
+  }
+  getOpponentPoints(){
+    if (!this.secondPlayer){
+      return 0
+    }
     const pieces = this._isFirstPlayer
       ? this.secondPlayer.pieces
       : this.firstPlayer.pieces
-    const reroll = this._makeMove(pieces, move, true)
+    return checkPoints(pieces)
+  }
+  opponentsMove(move){
+    const opponentPieces = this._isFirstPlayer
+      ? this.secondPlayer.pieces
+      : this.firstPlayer.pieces
+    const yourPieces = this._isFirstPlayer
+      ? this.firstPlayer.pieces
+      : this.secondPlayer.pieces
+    // coords need to be flipped for the opponent's move
+    if (move.coord[0] === 2){
+      move.coord[0] = 0
+    }
+    const reroll = this._makeMove(opponentPieces, yourPieces, move, true)
+    if (this.onEvent) this.onEvent({type: null})
     const isVictory = this._checkVictory()
     if (isVictory){
       return 'Congrats to player '+isVictory+'!'
@@ -231,6 +271,7 @@ export class GameEngine{
       if (this._yourId === this.firstPlayer.id){
         yield 'Decide who starts'
         this._playerTurn = decideStart() ? 1 : 2
+        if (this.onEvent) this.onEvent({type: 'switch-turns', playerTurn: this._playerTurn})
         this._hasStarted = true
       } else {
         yield 'Waiting for deciding who starts'
@@ -254,13 +295,19 @@ export class GameEngine{
       const die = rollDie()
       const diceResult = die.reduce((a,n)=>a+n, 0)
       this.lastDie = die
+      if (this.onEvent) this.onEvent({type: 'die-roll', dieResult: die})
       // highlight available moves
       
       const yourPieces = this._isFirstPlayer
         ? this.firstPlayer.pieces
         : this.secondPlayer.pieces
+      const opponentPieces = this._isFirstPlayer
+        ? this.secondPlayer.pieces
+        : this.firstPlayer.pieces
       const availableMoves = getAvailableMoves(this.board, yourPieces, diceResult, this._yourId)
+      console.log('available Moves', availableMoves)
       if (!availableMoves.length){
+        if (this.onEvent) this.onEvent({type: 'switch-turn'})
         yield 'No moves, switch turn'
         this._switchTurn()
         continue
@@ -274,7 +321,7 @@ export class GameEngine{
 
       highlightPromise.then(move=>{
         console.log('highlight')
-        const reroll = this._makeMove(yourPieces, move)
+        const reroll = this._makeMove(yourPieces, opponentPieces, move)
         const isVictory = this._checkVictory()
         if (isVictory){
           console.log('Congrats to player '+isVictory+'!')
@@ -286,11 +333,11 @@ export class GameEngine{
           //yield 'Move made, end turn'
           this._switchTurn()
         }
-        if (this.onBoardChange) this.onBoardChange()
+        if (this.onEvent) this.onEvent({type: null})
         this.availableMoves = null
       })
 
-      if (this.onBoardChange) this.onBoardChange()
+      if (this.onEvent) this.onEvent({type: null})
       yield availableMoves.length + ' moves highlighted'
 
       while(this.availableMoves){

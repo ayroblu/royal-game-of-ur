@@ -110,7 +110,7 @@ CREATE INDEX session__when_expire ON session (when_expire);
 CREATE TABLE game (
   game_id CITEXT PRIMARY KEY
 , board TEXT NOT NULL
-, playerTurn INT NOT NULL DEFAULT 0
+, player_turn INT NOT NULL DEFAULT 0
 , first_player_id TEXT NOT NULL
 , first_player_name TEXT NOT NULL
 , first_player_pieces TEXT NOT NULL
