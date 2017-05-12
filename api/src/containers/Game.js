@@ -54,11 +54,12 @@ class Game extends Component {
     const variables = JSON.stringify({id: roomId})
     api.runQuery(query, variables).then(res=>{
       console.log('first res', res)
-      if (!res){
+      if (res.errors){
         console.log('Invalid query')
         this.props.mainActions.set({errorText: 'Invalid query'})
       } else if (!res.data.game){
         //this._initialiseGame()
+        this.props.gameActions.set({loading: false})
       } else {
         this._restore(res.data.game)
       }
@@ -145,7 +146,7 @@ class Game extends Component {
     }
   }
   _getRenderedBoardPos(){
-    if (this.props.game.boardDims){
+    if (this.props.game.boardDims || !document.querySelector('.GameBoard')){
       return
     }
     const cDim = document.querySelector('.GameBoard').getBoundingClientRect()
@@ -164,11 +165,8 @@ class Game extends Component {
     )
   }
   render() {
-    //const {
-    //  loading, board, boardDims, containerDim, yourPoints, opponentPoints
-    //, yourPlayerId, opponentPlayerId
-    //} = this.props.game
-    const { loading, text } = this.props.game
+    const { loading } = this.props.game
+    const {rgu} = this.props
     if (loading) return this._renderLoading()
     setTimeout(()=>this._getRenderedBoardPos())
     return (
@@ -178,7 +176,7 @@ class Game extends Component {
           defaultGame={this.gameDetails}
           onEvent={this._onGameEvent}
         />
-        <PlayerArea points={this.props.rgu.opponentPoints} isOpponent={true}/>
+        <PlayerArea points={this.props.rgu.opponentPoints} isOpponent={true} waiting={!rgu.secondPlayer}/>
         <div className='flexGrow'>
           <GameBoard
             {...this.props.game}
@@ -188,7 +186,7 @@ class Game extends Component {
         </div>
         <PlayerArea points={this.props.rgu.yourPoints}/>
         <FloatingActionButton
-          text={text}
+          text={rgu.text}
           onClick={()=>this._next}
         />
       </div>

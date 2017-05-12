@@ -7,9 +7,20 @@ class PlayerArea extends Component {
   static propTypes = {
     isOpponent: PropTypes.bool
   , points: PropTypes.number.isRequired
+  , waiting: PropTypes.bool
+  }
+  _renderWaiting(isOpponent){
+    return (
+      <section className={cn('PlayerArea', isOpponent && 'isOpponent')}>
+        <h2>Waiting for Opponent</h2>
+      </section>
+    )
   }
   render() {
-    const {points, isOpponent} = this.props
+    const {points, isOpponent, waiting} = this.props
+    if (waiting){
+      return this._renderWaiting(isOpponent)
+    }
     return (
       <section className={cn('PlayerArea', isOpponent && 'isOpponent')}>
         <div>

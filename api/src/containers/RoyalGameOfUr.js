@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
@@ -6,6 +6,20 @@ import _ from 'lodash'
 
 import * as rguActions from '../actions/rgu'
 import * as game from '../utils/game'
+
+const textOptions = {
+  waitingForSecond: 'Waiting for second player'
+, decidingWhoToStart: 'Deciding who should start' //short
+
+, yourTurn: 'Your turn! Roll the dice!'
+, pickMove: 'Pick which move you want to make'
+, noMove: 'Sorry no moves available' //short
+, opponentsTurn: 'Waiting for opponent to make their move...'
+, reroll: 'You get a reroll, roll the dice!' //same as your turn?
+
+, victory: 'Well done! You win!'
+, lose: 'You lose, better luck next time!'
+}
 
 class RoyalGameOfUr extends Component {
   static propTypes = {
@@ -44,6 +58,35 @@ class RoyalGameOfUr extends Component {
       this.props.rguActions.set({board, firstPlayer, secondPlayer, hasStarted: playerTurn !== 0, playerTurn, yourId: yourId && !secondPlayerId ? yourId : secondPlayer.id})
     } else {
       this.initialiseBoard()
+    }
+  }
+  _getText(props){
+    const playerNumber = props.isFirstPlayer ? 1 : 2
+    if (!props.secondPlayer){
+      return textOptions.waitingForSecond
+    } else if (!props.playerTurn){
+      return textOptions.decidingWhoToStart
+    } else if (props.victor){
+      if (props.victor === props.playerNumber){
+        return textOptions.victory
+      } else {
+        return textOptions.lose
+      }
+    } else if (props.playerTurn === playerNumber){
+      if (props.availableMoves){
+        return textOptions.pickMove
+      } else {
+        return textOptions.yourTurn
+      }
+    } else if (props.playerTurn !== playerNumber){
+      return textOptions.opponentsTurn
+    }
+    return 'nada'
+  }
+  componentWillReceiveProps(props){
+    const text = this._getText(props)
+    if (props.text !== text){
+      this.props.rguActions.set({text})
     }
   }
   initialiseBoard(){

@@ -7,13 +7,14 @@ const initialState = {
 , isFirstPlayer: true
 , board: null
 , playerTurn: 0
-, isVictory: false
+, victor: null
 , lastDieRoll: null
 , dieResult: null
 , availableMoves: null
-, yourId: window.localStorage.getItem('yourId')
+, yourId: window.localStorage && window.localStorage.getItem('yourId')
 , yourPoints: 0
 , opponentPoints: 0
+, text: ''
 }
 
 export default function reducer(state=initialState, action) {

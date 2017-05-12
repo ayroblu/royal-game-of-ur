@@ -3,7 +3,6 @@ import { SET, RESET } from '../types/game'
 const initialState = {
   boardDims: null
 , loading: true
-, text: ''
 }
 
 export default function reducer(state=initialState, action) {
