@@ -10,8 +10,8 @@ import FloatingActionButton from '../components/FloatingActionButton'
 import * as userActions from '../actions/user'
 import * as gameActions from '../actions/game'
 import * as mainActions from '../actions/main'
+import * as rguActions from '../actions/rgu'
 import './Game.css'
-import {GameEngine} from '../utils/game'
 import {GraphQLApi} from '../api'
 
 const query = `
@@ -51,17 +51,14 @@ class Game extends Component {
     const {token} = this.props.user
     const api = new GraphQLApi({token})
     const variables = JSON.stringify({id: roomId})
-    console.log('init')
     api.runQuery(query, variables).then(res=>{
       console.log('first res', res)
       if (!res){
         console.log('Invalid query')
         this.props.mainActions.set({errorText: 'Invalid query'})
       } else if (!res.data.game){
-        console.log('initialise')
         this._initialiseGame()
       } else {
-        console.log('restore')
         this._restore(res.data.game)
       }
     }).catch(err=>{
@@ -70,16 +67,11 @@ class Game extends Component {
     })
   }
   _initialiseGame(){
-    const yourPlayerId = GameEngine.generateId()
-    window.localStorage.setItem('playerId', yourPlayerId)
-    const game = new GameEngine(yourPlayerId)
-    game.onEvent = this._onGameEvent
-    window.game = game
-    this.socket = socket(game)
-    this.props.gameActions.set({game, loading: false, board: game.board, yourPlayerId})
+    console.log('initialise')
+    //this.socket = socket(game)
 
     const {roomId: gameId} = this.props.match.params
-    const {id: firstPlayerId, name: firstPlayerName, pieces: firstPlayerPieces} = game.firstPlayer
+    const {id: firstPlayerId, name: firstPlayerName, pieces: firstPlayerPieces} = this.props.game.firstPlayer
     const variables = JSON.stringify({game: {
       gameId, board: JSON.stringify(game.board)
     , firstPlayerId, firstPlayerName, firstPlayerPieces: JSON.stringify(firstPlayerPieces)
@@ -94,26 +86,21 @@ class Game extends Component {
     })
   }
   _restore(res){
-    const yourPlayerId = window.localStorage.getItem('playerId') || GameEngine.generateId()
-    const game = new GameEngine(yourPlayerId, {
+    console.log('restore')
+    this.gameDetails = {
       ...res
     , board: JSON.parse(res.board)
     , firstPlayerPieces: JSON.parse(res.firstPlayerPieces)
     , secondPlayerPieces: res.secondPlayerId && JSON.parse(res.secondPlayerPieces)
     , playerTurn: parseInt(res.playerTurn, 10)
-    })
-    game.onEvent = this._onGameEvent
-    window.game = game
-    this.socket = socket(game)
-    this.props.gameActions.set({game, loading: false, board: game.board, yourPlayerId})
-
-    if (game._isFirstPlayer || game._hasStarted || !game.secondPlayer){
-      return
     }
+    this.props.gameActions.set({loading: false})
+  }
+  _startAsSecondPlayer(){
     const {roomId: gameId} = this.props.match.params
     const {
       id: secondPlayerId, name: secondPlayerName, pieces: secondPlayerPieces
-    } = game.secondPlayer
+    } = this.props.rgu.secondPlayer
     const variables = JSON.stringify({gameId, game: {
       secondPlayerId, secondPlayerName, secondPlayerPieces: JSON.stringify(secondPlayerPieces)
     }})
@@ -143,6 +130,9 @@ class Game extends Component {
       this._updateQuery(variables)
     } else if (e.type === 'switch-turn'){
       this.socket.emit('game switch')
+    } else if (e.type === 'join-game'){
+      this.socket.emit('player join', e.secondPlayer)
+      this._startAsSecondPlayer()
     } else if (e.type === 'make-move'){
       this.socket.emit('game move', e.move)
     } else if (e.type === 'die-roll'){
@@ -159,14 +149,7 @@ class Game extends Component {
     this.props.gameActions.set({boardDims: gDim, containerDim: cDim})
   }
   _next = ()=>{
-    const {game} = this.props.game
-    if (game._hasStarted){
-      const yourPieces = game.getYourPieces()
-      const opponentPieces = game.getOpponentPieces()
-      this.props.gameActions.set({text: game.next().value, yourPieces, opponentPieces})
-    } else {
-      this.props.gameActions.set({text: game.next().value})
-    }
+    // check for correct state. If in correct state, roll dice
   }
   _renderLoading(){
     return (
@@ -185,6 +168,10 @@ class Game extends Component {
     setTimeout(()=>this._getRenderedBoardPos())
     return (
       <div className='Game'>
+        <RoyalGameOfUr
+          defaultGame={this.gameDetails}
+          onEvent={this._onGameEvent}
+        />
         <PlayerArea points={game.getOpponentPoints()} isOpponent={true}/>
         <div className='flexGrow'>
           <GameBoard
@@ -195,7 +182,7 @@ class Game extends Component {
         <PlayerArea points={game.getYourPoints()}/>
         <FloatingActionButton
           text={text}
-          onClick={this._next}
+          onClick={()=>this._next}
         />
       </div>
     )
@@ -205,8 +192,10 @@ class Game extends Component {
 export default connect(state=>({
   user: state.user
 , game: state.game
+, rgu: state.rgu
 }), dispatch=>({
   userActions: bindActionCreators(userActions, dispatch)
 , gameActions: bindActionCreators(gameActions, dispatch)
 , mainActions: bindActionCreators(mainActions, dispatch)
+, rguActions: bindActionCreators(rguActions, dispatch)
 }))(Game)
