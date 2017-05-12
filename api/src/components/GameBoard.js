@@ -9,28 +9,27 @@ import {posToCoords} from '../utils/game'
 
 class GameBoard extends Component {
   static propTypes = {
-    board: PropTypes.array.isRequired
-  , setGameBoard: PropTypes.func.isRequired
+    setGameBoard: PropTypes.func.isRequired
   , boardDims: PropTypes.array
   , containerDims: PropTypes.array
-  , yourPieces: PropTypes.array
-  , opponentPieces: PropTypes.array
+  , game: PropTypes.object
   }
   componentWillMount(){
     this.poss = 0
   }
   render() {
-    const {game, board, boardDims, containerDim, yourPieces, opponentPieces} = this.props
-    const yourPlayerId = game._isFirstPlayer ? game.firstPlayer.id : game.secondPlayer.id
-    const opponentPlayerId = game._isFirstPlayer ? game.secondPlayer.id : game.firstPlayer.id
-    if (boardDims){
-      var pieces = yourPieces.filter(p=>p.pos > 0 && p.pos < 15)
-        .map(p=>({id: p.id, playerId: yourPlayerId, pos: posToCoords(p.pos)}))
-        .concat(opponentPieces.filter(p=>p.pos > 0 && p.pos < 15)
-          .map(p=>({id: p.id, playerId: opponentPlayerId, pos: posToCoords(p.pos, true)}))
+    const {game, boardDims, containerDim} = this.props
+    if (boardDims && game.secondPlayer){
+      const you = game.isFirstPlayer ? game.firstPlayer : game.secondPlayer
+      const opponent = game.isFirstPlayer ? game.secondPlayer : game.firstPlayer
+
+      var pieces = you.pieces.filter(p=>p.pos > 0 && p.pos < 15)
+        .map(p=>({id: p.id, playerId: you.id, pos: posToCoords(p.pos)}))
+        .concat(opponent.pieces.filter(p=>p.pos > 0 && p.pos < 15)
+          .map(p=>({id: p.id, playerId: opponent.id, pos: posToCoords(p.pos, true)}))
         ).map(c=>({
           id: c.id
-        , isOpponent: c.playerId !== yourPlayerId
+        , isOpponent: c.playerId !== you.id
         , playerId: c.playerId
         , left: boardDims[c.pos[0]][c.pos[1]].left + boardDims[c.pos[0]][c.pos[1]].width/2 - containerDim.left
         , top: boardDims[c.pos[0]][c.pos[1]].top + boardDims[c.pos[0]][c.pos[1]].height/2 - containerDim.top
@@ -41,7 +40,7 @@ class GameBoard extends Component {
     return (
       <div className='GameBoard'>
         <div className='mainBoard'>
-          {board.map((row, i)=>(
+          {game.board && game.board.map((row, i)=>(
           <div key={i} className='row'>
             {row.map((b, k)=>(
             <GameBlock key={k} {...b} onClick={b.onClick} />
@@ -51,8 +50,8 @@ class GameBoard extends Component {
         </div>
         <div className='dice'>
           <h2>Dice roll</h2>
-          {typeof this.props.dieResult === 'number'
-          ? this.props.dieResult
+          {typeof game.dieResult === 'number'
+          ? game.dieResult
           : '-'}
         </div>
         {!!boardDims && pieces.map(p=>(

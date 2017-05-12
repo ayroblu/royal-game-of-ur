@@ -12,6 +12,8 @@ const initialState = {
 , dieResult: null
 , availableMoves: null
 , yourId: window.localStorage.getItem('yourId')
+, yourPoints: 0
+, opponentPoints: 0
 }
 
 export default function reducer(state=initialState, action) {

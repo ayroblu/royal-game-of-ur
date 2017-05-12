@@ -1,17 +1,9 @@
 import { SET, RESET } from '../types/game'
 
 const initialState = {
-  board: []
-, yourPieces: []
-, opponentPieces: []
-, yourPlayerId: null
-, opponentPlayerId: null
-, yourPlayerName: null
-, opponentPlayerName: null
-, boardDims: null
+  boardDims: null
 , loading: true
 , text: ''
-, dieResult: null
 }
 
 export default function reducer(state=initialState, action) {

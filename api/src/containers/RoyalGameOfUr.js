@@ -4,8 +4,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import _ from 'lodash'
 
-import * as userActions from '../actions/user'
-import './RoyalGameOfUr.css'
+import * as rguActions from '../actions/rgu'
 import * as game from '../utils/game'
 
 class RoyalGameOfUr extends Component {
@@ -16,10 +15,9 @@ class RoyalGameOfUr extends Component {
   generateId(){
     return Math.random().toString(36).substr(2)
   }
-  constructor(props){
-    super(props)
+  componentWillMount(){
     // yourId, game
-    const {yourId, defaultGame} = props
+    const {yourId, defaultGame} = this.props
     if (defaultGame){
       const {board, firstPlayerPieces, secondPlayerPieces
       , firstPlayerId, firstPlayerName, secondPlayerId, secondPlayerName, playerTurn} = defaultGame
@@ -38,12 +36,12 @@ class RoyalGameOfUr extends Component {
       } else if (!yourId) {
         secondPlayer = {
           id: this.generateId()
-        , pieces: createPlayerPieces()
+        , pieces: game.createPlayerPieces()
         , name: 'Player 2'
         }
         window.localStorage.setItem('yourId', secondPlayer.id)
       }
-      this.props.rguActions.set({board, secondPlayer, hasStarted: playerTurn !== 0, playerTurn, yourId: yourId && !secondPlayerId ? yourId : secondPlayer.id})
+      this.props.rguActions.set({board, firstPlayer, secondPlayer, hasStarted: playerTurn !== 0, playerTurn, yourId: yourId && !secondPlayerId ? yourId : secondPlayer.id})
     } else {
       this.initialiseBoard()
     }
@@ -55,7 +53,7 @@ class RoyalGameOfUr extends Component {
     , pieces: game.createPlayerPieces()
     , name: 'Player 1'
     }
-    window.localStorage.setItem('yourId', secondPlayer.id)
+    window.localStorage.setItem('yourId', firstPlayer.id)
     this.props.rguActions.set({board, firstPlayer, yourId: firstPlayer.id})
   }
   addSecondPlayer({id, name}){
@@ -86,7 +84,7 @@ class RoyalGameOfUr extends Component {
       const op = board[move.coord[0]][move.coord[1]].player
       otherPlayerPieces[op.id].pos = 0
     }
-    this.props.board[move.coord[0]][move.coord[1]].player = {
+    board[move.coord[0]][move.coord[1]].player = {
       id: move.id, playerId: move.playerId, pos: move.pos, isOpponent
     }
     _.flatten(board).forEach(b=>b.onClick = null)
@@ -94,7 +92,7 @@ class RoyalGameOfUr extends Component {
 
     this.props.rguActions.set({board})
 
-    return !!this.props.board[move.coord[0]][move.coord[1]].reroll
+    return !!board[move.coord[0]][move.coord[1]].reroll
     // board piece has {player:{id: 0, playerId: '', pos: 3, isOpponent: false}}
   }
   checkVictory(){

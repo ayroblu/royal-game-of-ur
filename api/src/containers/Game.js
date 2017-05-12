@@ -4,6 +4,7 @@ import { bindActionCreators } from 'redux'
 import _ from 'lodash'
 
 import socket from '../utils/socket'
+import RoyalGameOfUr from './RoyalGameOfUr'
 import GameBoard from '../components/GameBoard'
 import PlayerArea from '../components/PlayerArea'
 import FloatingActionButton from '../components/FloatingActionButton'
@@ -57,7 +58,7 @@ class Game extends Component {
         console.log('Invalid query')
         this.props.mainActions.set({errorText: 'Invalid query'})
       } else if (!res.data.game){
-        this._initialiseGame()
+        //this._initialiseGame()
       } else {
         this._restore(res.data.game)
       }
@@ -68,12 +69,12 @@ class Game extends Component {
   }
   _initialiseGame(){
     console.log('initialise')
-    //this.socket = socket(game)
+    this.socket = socket(this._game)
 
     const {roomId: gameId} = this.props.match.params
-    const {id: firstPlayerId, name: firstPlayerName, pieces: firstPlayerPieces} = this.props.game.firstPlayer
+    const {id: firstPlayerId, name: firstPlayerName, pieces: firstPlayerPieces, board} = this.props.rgu.firstPlayer
     const variables = JSON.stringify({game: {
-      gameId, board: JSON.stringify(game.board)
+      gameId, board: JSON.stringify(board)
     , firstPlayerId, firstPlayerName, firstPlayerPieces: JSON.stringify(firstPlayerPieces)
     }})
     const {token} = this.props.user
@@ -87,6 +88,7 @@ class Game extends Component {
   }
   _restore(res){
     console.log('restore')
+    this.socket = socket(this._game)
     this.gameDetails = {
       ...res
     , board: JSON.parse(res.board)
@@ -132,11 +134,14 @@ class Game extends Component {
       this.socket.emit('game switch')
     } else if (e.type === 'join-game'){
       this.socket.emit('player join', e.secondPlayer)
+    } else if (e.type === 'init-game'){
+      this._initialiseGame()
+      //this.socket.emit('game init', e.secondPlayer)
       this._startAsSecondPlayer()
     } else if (e.type === 'make-move'){
       this.socket.emit('game move', e.move)
     } else if (e.type === 'die-roll'){
-      this.props.gameActions.set({dieResult: e.dieResult.reduce((a,n)=>a+n,0)})
+      //this.props.gameActions.set({dieResult: e.dieResult.reduce((a,n)=>a+n,0)})
     }
   }
   _getRenderedBoardPos(){
@@ -163,23 +168,25 @@ class Game extends Component {
     //  loading, board, boardDims, containerDim, yourPoints, opponentPoints
     //, yourPlayerId, opponentPlayerId
     //} = this.props.game
-    const { game, loading, text } = this.props.game
+    const { loading, text } = this.props.game
     if (loading) return this._renderLoading()
     setTimeout(()=>this._getRenderedBoardPos())
     return (
       <div className='Game'>
         <RoyalGameOfUr
+          ref={r=>this._game=r}
           defaultGame={this.gameDetails}
           onEvent={this._onGameEvent}
         />
-        <PlayerArea points={game.getOpponentPoints()} isOpponent={true}/>
+        <PlayerArea points={this.props.rgu.opponentPoints} isOpponent={true}/>
         <div className='flexGrow'>
           <GameBoard
             {...this.props.game}
             setGameBoard={board=>this.props.gameActions.set({board})}
+            game={this.props.rgu}
           />
         </div>
-        <PlayerArea points={game.getYourPoints()}/>
+        <PlayerArea points={this.props.rgu.yourPoints}/>
         <FloatingActionButton
           text={text}
           onClick={()=>this._next}
