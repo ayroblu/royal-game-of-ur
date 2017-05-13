@@ -54,7 +54,7 @@ class Game extends Component {
     const variables = JSON.stringify({id: roomId})
     api.runQuery(query, variables).then(res=>{
       console.log('first res', res)
-      this.initSocket()
+      this._initSocket()
       if (res.errors){
         console.log('Invalid query')
         this.props.mainActions.set({errorText: 'Invalid query'})
@@ -117,8 +117,10 @@ class Game extends Component {
       this.props.mainActions.set({errorText: 'Connection error'})
     })
   }
-  initSocket(){
+  _initSocket(){
     const socket = io()
+    const {roomId} = this.props.match.params
+    socket.emit('join room', `room: ${roomId}`)
     this.socket = socket
     socket.on('connect', ()=>{
       console.log('Socket connection made')
