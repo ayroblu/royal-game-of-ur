@@ -6,3 +6,4 @@ if (process.env.NODE_ENV === 'production') {
 export {
   apiUrl
 }
+export const hotReload = false

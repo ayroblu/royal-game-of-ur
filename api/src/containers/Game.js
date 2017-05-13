@@ -2,8 +2,8 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import _ from 'lodash'
+import io from 'socket.io-client'
 
-import socket from '../utils/socket'
 import RoyalGameOfUr from './RoyalGameOfUr'
 import GameBoard from '../components/GameBoard'
 import PlayerArea from '../components/PlayerArea'
@@ -54,6 +54,7 @@ class Game extends Component {
     const variables = JSON.stringify({id: roomId})
     api.runQuery(query, variables).then(res=>{
       console.log('first res', res)
+      this.initSocket()
       if (res.errors){
         console.log('Invalid query')
         this.props.mainActions.set({errorText: 'Invalid query'})
@@ -70,13 +71,11 @@ class Game extends Component {
   }
   _initialiseGame(){
     console.log('initialise')
-    this.socket = socket(this._game)
 
     const {roomId: gameId} = this.props.match.params
-    const {id: firstPlayerId, name: firstPlayerName, pieces: firstPlayerPieces, board} = this.props.rgu.firstPlayer
+    const {id: firstPlayerId, name: firstPlayerName, pieces: firstPlayerPieces} = this.props.rgu.firstPlayer
     const variables = JSON.stringify({game: {
-      gameId, board: JSON.stringify(board)
-    , firstPlayerId, firstPlayerName, firstPlayerPieces: JSON.stringify(firstPlayerPieces)
+      gameId, firstPlayerId, firstPlayerName, firstPlayerPieces: JSON.stringify(firstPlayerPieces)
     }})
     const {token} = this.props.user
     const api = new GraphQLApi({token})
@@ -89,14 +88,13 @@ class Game extends Component {
   }
   _restore(res){
     console.log('restore')
-    this.socket = socket(this._game)
     this.gameDetails = {
       ...res
-    , board: JSON.parse(res.board)
     , firstPlayerPieces: JSON.parse(res.firstPlayerPieces)
     , secondPlayerPieces: res.secondPlayerId && JSON.parse(res.secondPlayerPieces)
     , playerTurn: parseInt(res.playerTurn, 10)
     }
+    //this.props.rguActions.set(gameDetails)
     this.props.gameActions.set({loading: false})
   }
   _startAsSecondPlayer(){
@@ -119,6 +117,29 @@ class Game extends Component {
       this.props.mainActions.set({errorText: 'Connection error'})
     })
   }
+  initSocket(){
+    const socket = io()
+    this.socket = socket
+    socket.on('connect', ()=>{
+      console.log('Socket connection made')
+    })
+    socket.on('game start', playerTurn=>{
+      console.log('game start')
+      this.props.rguActions.set({playerTurn})
+    })
+    socket.on('game move', data=>{
+      console.log('game move', data)
+      this._game.opponentsMove(data)
+    })
+    socket.on('game switch', ({playerTurn})=>{
+      console.log('game switch', playerTurn)
+      this.props.rguActions.set({playerTurn})
+    })
+    socket.on('player join', data=>{
+      console.log('player join', data)
+      this._game.addSecondPlayer(data)
+    })
+  }
   _onGameEvent = e=>{
     console.log('event', e)
     this.forceUpdate()
@@ -131,15 +152,29 @@ class Game extends Component {
         playerTurn: e.playerTurn
       }})
       this._updateQuery(variables)
-    } else if (e.type === 'switch-turn'){
-      this.socket.emit('game switch')
+      this.socket.emit('game switch', {playerTurn: e.playerTurn})
+    } else if (e.type === 'start-game'){
+      //update
+      const {roomId: gameId} = this.props.match.params
+      const variables = JSON.stringify({gameId, game: {
+        playerTurn: e.playerTurn
+      }})
+      this._updateQuery(variables)
+      this.socket.emit('game start', e.playerTurn)
     } else if (e.type === 'join-game'){
+      this._startAsSecondPlayer()
       this.socket.emit('player join', e.secondPlayer)
     } else if (e.type === 'init-game'){
       this._initialiseGame()
       //this.socket.emit('game init', e.secondPlayer)
-      this._startAsSecondPlayer()
+      //this._startAsSecondPlayer()
     } else if (e.type === 'make-move'){
+      const {roomId: gameId} = this.props.match.params
+      const variables = JSON.stringify({gameId, game: {
+        firstPlayerPieces: JSON.stringify(this.props.rgu.firstPlayer.pieces)
+      , secondPlayerPieces: JSON.stringify(this.props.rgu.secondPlayer.pieces)
+      }})
+      this._updateQuery(variables)
       this.socket.emit('game move', e.move)
     } else if (e.type === 'die-roll'){
       //this.props.gameActions.set({dieResult: e.dieResult.reduce((a,n)=>a+n,0)})
@@ -156,6 +191,14 @@ class Game extends Component {
   }
   _next = ()=>{
     // check for correct state. If in correct state, roll dice
+    console.log('Next pressed');
+    const {isFirstPlayer, playerTurn, victor, availableMoves} = this.props.rgu
+    if (victor || availableMoves) return
+    const playerNumber = isFirstPlayer ? 1 : 2
+    if (playerTurn === playerNumber){
+      console.log('game', this._game)
+      this._game.rollDie()
+    }
   }
   _renderLoading(){
     return (
@@ -172,22 +215,21 @@ class Game extends Component {
     return (
       <div className='Game'>
         <RoyalGameOfUr
-          ref={r=>this._game=r}
+          setRef={r=>this._game=r}
           defaultGame={this.gameDetails}
           onEvent={this._onGameEvent}
         />
-        <PlayerArea points={this.props.rgu.opponentPoints} isOpponent={true} waiting={!rgu.secondPlayer}/>
+        <PlayerArea player={rgu.isFirstPlayer ? rgu.secondPlayer : rgu.firstPlayer} points={this.props.rgu.opponentPoints} isOpponent={true} waiting={!rgu.secondPlayer}/>
         <div className='flexGrow'>
           <GameBoard
             {...this.props.game}
-            setGameBoard={board=>this.props.gameActions.set({board})}
             game={this.props.rgu}
           />
         </div>
-        <PlayerArea points={this.props.rgu.yourPoints}/>
+        <PlayerArea player={rgu.isFirstPlayer ? rgu.firstPlayer : rgu.secondPlayer} points={this.props.rgu.yourPoints}/>
         <FloatingActionButton
           text={rgu.text}
-          onClick={()=>this._next}
+          onClick={this._next}
         />
       </div>
     )

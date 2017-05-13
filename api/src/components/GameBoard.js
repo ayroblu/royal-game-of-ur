@@ -9,8 +9,7 @@ import {posToCoords} from '../utils/game'
 
 class GameBoard extends Component {
   static propTypes = {
-    setGameBoard: PropTypes.func.isRequired
-  , boardDims: PropTypes.array
+    boardDims: PropTypes.array
   , containerDims: PropTypes.array
   , game: PropTypes.object
   }
@@ -34,7 +33,6 @@ class GameBoard extends Component {
         , left: boardDims[c.pos[0]][c.pos[1]].left + boardDims[c.pos[0]][c.pos[1]].width/2 - containerDim.left
         , top: boardDims[c.pos[0]][c.pos[1]].top + boardDims[c.pos[0]][c.pos[1]].height/2 - containerDim.top
         }))
-      console.log('pieces', pieces)
     }
     // board piece has {player:{id: 0, playerId: '', pos: 3, isOpponent: false}}
     return (
@@ -54,7 +52,7 @@ class GameBoard extends Component {
           ? game.dieResult
           : '-'}
         </div>
-        {!!boardDims && pieces.map(p=>(
+        {!!boardDims && pieces && pieces.map(p=>(
         <GamePiece key={`${p.playerId}-${p.id}`} left={p.left} top={p.top} isOpponent={p.isOpponent}/>
         ))}
       </div>

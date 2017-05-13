@@ -4,10 +4,13 @@
   display: flex;
   justify-content: center;
 }
-.PlayerArea h2{
+.PlayerArea h2, .PlayerArea h3{
   font-size: 1rem;
   font-weight: 300;
   margin: 0;
+}
+.PlayerArea h2{
+  margin-right: 10px;
 }
 .PlayerArea .PiecesPot{
   width: 80px;

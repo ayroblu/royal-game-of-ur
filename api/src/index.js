@@ -8,6 +8,7 @@ import configureStore from './store'
 import './index.css'
 import App from './containers/App'
 import DevTools from './components/DevTools'
+import {hotReload} from './config'
 
 // Let the reducers handle initial state
 const initialState = {}
@@ -30,7 +31,7 @@ const render = Container=>{
 }
 render(App)
 
-if (process.env.NODE_ENV==='development' && module.hot) {
+if (hotReload && module.hot) {
   module.hot.accept('./containers/App', () => {
     console.clear()
     const NewApp = require('./containers/App').default
