@@ -11,6 +11,9 @@ exports[`test renders correctly 1`] = `
     <h2>
       Here\'s the youtube video that inspired me to make this, as well as where I get the basic rules from
     </h2>
+    <p>
+      I highly recommend watching this video, its very entertaining and very interesting
+    </p>
     <iframe
       allowFullScreen={true}
       frameBorder="0"

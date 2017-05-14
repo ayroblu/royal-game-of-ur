@@ -14,6 +14,18 @@ Just run the following command:
 docker-compose up
 ```
 
+TODO
+----
+Okay so there's a lot that I want to do, put the basic playthrough works, and a lot of what I'd add would be with regards to improving the experience for the player and the developer
+
+* Better graphics, images, which reflect the real game board's appearance
+* Better animations, 3D, dice rolls
+* Game chat
+* Game names
+* Mobile support
+* Better tests, including a more comprehensive suite of unit tests with better code coverage and integration tests
+* Add better tutorials and explanations on how the game works
+
 Help
 ----
 ### Docker Compose
@@ -21,7 +33,7 @@ Of note, the database is held by docker, you may want to setup a replication to 
 
 ```bash
 docker-compose up # -d for daemon, --build if you make a change
-docker-compose down
+docker-compose down # -v removes volumes too, might want to look at the -h for removing things like orphaned containers
 docker volume rm example_dbdata
 
 # Inspect
@@ -41,8 +53,7 @@ docker rmi $(docker images -q)
 docker volume rm $(docker volume ls -q)
 
 # Shell Access
-docker-machine ssh default
-docker exec -it my-app-container bash
+docker-compose exec api bash
 ```
 
 ### NodeJS Express 

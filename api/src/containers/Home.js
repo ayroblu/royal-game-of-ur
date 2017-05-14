@@ -73,6 +73,7 @@ class Home extends Component {
         <p>This is a 4,500 year old game, one of the oldest, if not the oldest board game in history</p>
         <div>
           <h2>Here's the youtube video that inspired me to make this, as well as where I get the basic rules from</h2>
+          <p>I highly recommend watching this video, its very entertaining and very interesting</p>
           <iframe width="560" height="315" src="https://www.youtube.com/embed/WZskjLq040I" frameBorder="0" allowFullScreen></iframe>
         </div>
         <div className='Left'>
