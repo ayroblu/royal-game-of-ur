@@ -92,9 +92,9 @@ class RoyalGameOfUr extends Component {
     , yourId: yourId ? yourId : secondPlayer.id, isFirstPlayer
     })
     console.log('isFirstPlayer', isFirstPlayer)
-    if (playerTurn === 0 && isFirstPlayer){
+    if (playerTurn === 0 && isFirstPlayer && secondPlayer){
       this.startGame()
-    } else {
+    } else if (playerTurn) {
       setTimeout(()=>{
         this.calculatePoints()
       })

@@ -7,6 +7,7 @@ import {
 , GraphQLList
 } from 'graphql'
 import {snakeCaseObject} from '../utils/rename'
+import db from './db'
 
 import {PersonType, PersonInputType} from './PersonType'
 import {GameType, GameInputType} from './GameType'
@@ -37,6 +38,13 @@ const QueryType = new GraphQLObjectType({
       }
     , resolve: (root, game, {loaders}, ast)=>{
         return loaders.game.load(game)
+      }
+    }
+  , games: {
+      type: new GraphQLList(GameType)
+    , description: 'Get all saved games'
+    , resolve: (root, game, {loaders}, ast)=>{
+        return db.getGames()
       }
     }
   })

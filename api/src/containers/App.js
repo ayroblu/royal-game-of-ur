@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { withRouter, Link, Switch, Route } from 'react-router-dom'
+import { withRouter, Switch, Route } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 
@@ -9,26 +9,8 @@ import NoMatch from '../components/NoMatch'
 
 import * as userActions from '../actions/user'
 import * as mainActions from '../actions/main'
-//import {GraphQLApi} from '../api'
 
-//const query = `
-//{
-//  person(id:8){
-//    firstName
-//  }
-//}
-//`
 class App extends Component {
-  componentWillMount(){
-    //const api = new GraphQLApi()
-    //api.runQuery(query).then(res=>{
-    //  console.log(res)
-    //  this.props.mainActions.set({loading: false})
-    //}).catch(err=>{
-    //  console.error('Connection error', err)
-    //  this.props.mainActions.set({loading: false, errorText: 'Connection error'})
-    //})
-  }
   _renderLoading(){
     return (
       <div>Loading</div>
@@ -45,19 +27,11 @@ class App extends Component {
       )
     }
     return (
-      <div>
-        <Switch>
-          <Route exact path="/" component={Home}/>
-          <Route exact path="/game/:roomId" component={Game}/>
-          <Route component={NoMatch}/>
-        </Switch>
-        <div>
-          <Link to='/game/1'>Game</Link>
-        </div>
-        <div>
-          <Link to='/'>Home</Link>
-        </div>
-      </div>
+      <Switch>
+        <Route exact path="/" component={Home}/>
+        <Route exact path="/game/:roomId" component={Game}/>
+        <Route component={NoMatch}/>
+      </Switch>
     )
   }
 }

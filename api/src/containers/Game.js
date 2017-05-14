@@ -20,7 +20,6 @@ query ($id: String!){
   game(id:$id){
     gameId
     playerTurn
-    board
     firstPlayerId
     firstPlayerName
     firstPlayerPieces
@@ -55,7 +54,7 @@ class Game extends Component {
     api.runQuery(query, variables).then(res=>{
       console.log('first res', res)
       this._initSocket()
-      if (res.errors){
+      if (!res || res.errors){
         console.log('Invalid query')
         this.props.mainActions.set({errorText: 'Invalid query'})
       } else if (!res.data.game){
@@ -193,7 +192,6 @@ class Game extends Component {
   }
   _next = ()=>{
     // check for correct state. If in correct state, roll dice
-    console.log('Next pressed');
     const {isFirstPlayer, playerTurn, victor, availableMoves} = this.props.rgu
     if (victor || availableMoves) return
     const playerNumber = isFirstPlayer ? 1 : 2
@@ -214,6 +212,7 @@ class Game extends Component {
     const {rgu} = this.props
     if (loading) return this._renderLoading()
     setTimeout(()=>this._getRenderedBoardPos())
+    console.log('isActive', rgu.playerTurn === (rgu.isFirstPlayer ? 1 : 2) && !rgu.availableMoves)
     return (
       <div className='Game'>
         <RoyalGameOfUr
@@ -231,6 +230,7 @@ class Game extends Component {
         <PlayerArea player={rgu.isFirstPlayer ? rgu.firstPlayer : rgu.secondPlayer} points={this.props.rgu.yourPoints}/>
         <FloatingActionButton
           text={rgu.text}
+          isActive={rgu.playerTurn === (rgu.isFirstPlayer ? 1 : 2) && !rgu.availableMoves}
           onClick={this._next}
         />
       </div>

@@ -8,7 +8,12 @@ knex.on('query', queryData=>{
 
 class db{
   static getGames(games){
-    return knex.select().from('game').whereIn('game_id', games)
+    const query = knex.select().from('game')
+    if (games && games.filter(g=>g).length){
+      console.log('games', games)
+      query.whereIn('game_id', games)
+    }
+    return query
   }
   static insertGame(game){
     return knex.insert(game).into('game')

@@ -5,3 +5,8 @@ body {
   font-weight: 300;
   text-align: center;
 }
+h1,h2,h3{
+  font-size: 1rem;
+  font-weight: 300;
+  margin: 0;
+}

@@ -12,8 +12,9 @@ class PlayerArea extends Component {
   }
   _renderWaiting(isOpponent){
     return (
-      <section className={cn('PlayerArea', isOpponent && 'isOpponent')}>
+      <section className={cn('PlayerArea', isOpponent && 'isOpponent', 'Waiting')}>
         <h2>Waiting for Opponent</h2>
+        <p>Send them this url: "<span>{window.location.href}</span>"</p>
       </section>
     )
   }
@@ -25,11 +26,12 @@ class PlayerArea extends Component {
     return (
       <section className={cn('PlayerArea', isOpponent && 'isOpponent')}>
         <h2>Player: {player ? player.name : 'No player name'}</h2>
+        {false &&
         <div>
           <h3>Pieces</h3>
           <div className='PiecesPot'>
           </div>
-        </div>
+        </div>}
         <div className='points'>Points: {points}</div>
       </section>
     )

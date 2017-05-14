@@ -1,8 +1,11 @@
 .PlayerArea{
-  height: 120px;
+  min-height: 40px;
   padding-top: 10px;
   display: flex;
   justify-content: center;
+}
+.PlayerArea.Waiting{
+  flex-direction: column;
 }
 .PlayerArea h2, .PlayerArea h3{
   font-size: 1rem;

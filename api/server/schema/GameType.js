@@ -13,7 +13,6 @@ const type = {
       type: GraphQLString
     , resolve: ({game_id})=>game_id
     }
-  , board: {type: GraphQLString}
   , playerTurn: {
       type: GraphQLString
     , resolve: ({player_turn})=>player_turn
