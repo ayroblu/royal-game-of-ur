@@ -21,7 +21,7 @@ exports[`test renders correctly 1`] = `
   <div
     className="start">
     <a
-      href="/game/e32g5d6nazgn8mbhi2tsxlxr"
+      href="/game/123"
       onClick={[Function]}>
       Start a game!
     </a>

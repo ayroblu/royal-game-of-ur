@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { Link } from 'react-router-dom'
+import moment from 'moment'
 
 import * as homeActions from '../actions/home'
 import * as mainActions from '../actions/main'
@@ -12,6 +13,7 @@ const query = `
 query{
   games{
     gameId
+    whenAdded
   }
 }
 `
@@ -31,9 +33,28 @@ class Home extends Component {
       this.props.mainActions.set({errorText: 'Connection error'})
     })
   }
-  _renderExistingGames(game){
+  _renderExistingGames(games){
     return (
-      <Link key={game.gameId} to={`/game/${game.gameId}`} className='block gameLink'>{game.gameId}</Link>
+      <table>
+        <thead>
+          <tr>
+            <th>Game Id</th>
+            <th>When Created</th>
+          </tr>
+        </thead>
+        <tbody>
+          {games.map(game=>(
+            <tr key={game.gameId} onClick={()=>this.props.history.push(`/game/${game.gameId}`)}>
+              <td>
+                {game.gameId}
+              </td>
+              <td>
+                {moment(game.whenAdded).format()}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     )
   }
   render() {
@@ -41,7 +62,7 @@ class Home extends Component {
     const {loading, games, nextGame} = this.props.home
     if (!loading){
       if (games.length){
-        existingGames = games.map(this._renderExistingGames)
+        existingGames = this._renderExistingGames(games)
       } else {
         existingGames = <div className='block'>No games found</div>
       }
@@ -59,9 +80,9 @@ class Home extends Component {
         </div>
         <section className='existingGames'>
           <h2>Existing Games</h2>
-          <ul>
+          <div className='games'>
             {existingGames}
-          </ul>
+          </div>
         </section>
       </div>
     )

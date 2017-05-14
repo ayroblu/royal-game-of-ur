@@ -10,11 +10,12 @@ import App from './App'
 
 const initialState = {}
 const store = configureStore(initialState)
+store.dispatch({type: 'HOME/SET', payload: {nextGame: '123'}})
 
 var server
 beforeEach(()=>{
   server = sinon.fakeServer.create()
-  server.respondWith('POST', '/api', '{}')
+  server.respondWith('POST', '/api', JSON.stringify({data: {games: []}}))
 })
 afterAll(()=>{
   server.restore()

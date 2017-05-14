@@ -41,19 +41,34 @@
   margin: 20px 0 0;
   background: white;
 }
-.Home .existingGames ul{
+.Home .existingGames > .games{
   margin: 10px 20px;
   border: 4px solid #ddd;
   padding: 0;
 }
-.Home .existingGames ul > .block{
+.Home .existingGames > .games > table{
+  width: 100%;
+}
+.Home .existingGames > .games > .block{
   display: block;
   padding: 20px;
 }
-.Home .existingGames ul > .block.gameLink{
+.Home .existingGames > .games > .block.gameLink{
   text-decoration: none;
   color: inherit;
 }
-.Home .existingGames ul > .block.gameLink:hover{
+.Home .existingGames > .games > .block.gameLink:hover{
   background: #fafafa;
+}
+.Home .games > table{
+  border-collapse: collapse;
+}
+.Home .games > table > tbody > tr{
+  cursor: pointer;
+}
+.Home .games > table > tbody > tr:hover{
+  background-color: #fafafa;
+}
+.Home .games > table td, .Home .games > table th{
+  padding: 6px;
 }

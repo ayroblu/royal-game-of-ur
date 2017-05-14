@@ -59,7 +59,6 @@ export function rollDie(){
 }
 // will never be opponent
 export function getAvailableMoves(board, playerPieces, diceResult, currentPlayerId = null){
-  console.log('getAvailMoves', board, playerPieces, diceResult, currentPlayerId)
   if (diceResult === 0) return []
   const history = []
   const moves = playerPieces.map((p, i)=>{

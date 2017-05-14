@@ -71,25 +71,4 @@ describe('Game play', ()=>{
   })
 })
 describe('Game run through', ()=>{
-  const yourId = GameEngine.generateId()
-  const opponentId = GameEngine.generateId()
-  const gameEngine = new GameEngine(yourId)
-  expect(gameEngine.next().value).toBe('Need second player')
-  gameEngine.addSecondPlayer({id: opponentId, name: 'Player 2'})
-  let lastText = gameEngine.next().value
-  console.log(lastText)
-  lastText = gameEngine.next().value
-  console.log(lastText)
-  console.log('playerturn', gameEngine._playerTurn, gameEngine._isFirstPlayer)
-  const isNotMyTurn = /Not your/.test(lastText)
-  if (isNotMyTurn){
-    console.log('switch turns')
-    gameEngine._switchTurn()
-    lastText = gameEngine.next().value
-    console.log(lastText)
-  }
-  lastText = gameEngine.next().value
-  console.log(lastText)
-  console.log('player turn', gameEngine._playerTurn, gameEngine._isFirstPlayer)
-  console.log('lastDie', gameEngine.lastDie, 'availableMoves', gameEngine.availableMoves)
 })

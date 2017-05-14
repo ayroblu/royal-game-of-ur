@@ -41,6 +41,14 @@ const type = {
       type: GraphQLString
     , resolve: ({second_player_pieces})=>second_player_pieces
     }
+  , whenAdded: {
+      type: GraphQLString
+    , resolve: ({when_added})=>when_added
+    }
+  , whenUpdated: {
+      type: GraphQLString
+    , resolve: ({when_updated})=>when_updated
+    }
   })
 }
 export const GameType = new GraphQLObjectType(type)
