@@ -53,7 +53,7 @@ class Game extends Component {
     const api = new GraphQLApi({token})
     const variables = JSON.stringify({id: roomId})
     api.runQuery(query, variables).then(res=>{
-      console.log('first res', res)
+      console.log('game query result', res)
       this._initSocket()
       if (!res || res.errors){
         console.log('Invalid query')

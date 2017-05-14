@@ -20,7 +20,7 @@ class Home extends Component {
     const api = new GraphQLApi()
     const nextGame = Math.random().toString(36).substring(2)
     api.runQuery(query).then(res=>{
-      console.log(res)
+      console.log('list of games', res)
       if (!res || res.errors){
         this.props.mainActions.set({errorText: 'Failed to get data'})
         return
