@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import _ from 'lodash'
 import io from 'socket.io-client'
+import { Link } from 'react-router-dom'
 
 import RoyalGameOfUr from './RoyalGameOfUr'
 import GameBoard from '../components/GameBoard'
@@ -212,9 +213,9 @@ class Game extends Component {
     const {rgu} = this.props
     if (loading) return this._renderLoading()
     setTimeout(()=>this._getRenderedBoardPos())
-    console.log('isActive', rgu.playerTurn === (rgu.isFirstPlayer ? 1 : 2) && !rgu.availableMoves)
     return (
       <div className='Game'>
+        <Link to='/'><h1>The Royal Game of Ur</h1></Link>
         <RoyalGameOfUr
           setRef={r=>this._game=r}
           defaultGame={this.gameDetails}
@@ -228,11 +229,12 @@ class Game extends Component {
           />
         </div>
         <PlayerArea player={rgu.isFirstPlayer ? rgu.firstPlayer : rgu.secondPlayer} points={this.props.rgu.yourPoints}/>
+        {rgu.yourId && (!rgu.secondPlayer || rgu.firstPlayer.id === rgu.yourId || rgu.secondPlayer.id === rgu.yourId) &&
         <FloatingActionButton
           text={rgu.text}
           isActive={rgu.playerTurn === (rgu.isFirstPlayer ? 1 : 2) && !rgu.availableMoves}
           onClick={this._next}
-        />
+        />}
       </div>
     )
   }

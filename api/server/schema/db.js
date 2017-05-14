@@ -8,7 +8,7 @@ knex.on('query', queryData=>{
 
 class db{
   static getGames(games){
-    const query = knex.select().from('game')
+    const query = knex.select().from('game').orderBy('when_added', 'desc')
     if (games && games.filter(g=>g).length){
       console.log('games', games)
       query.whereIn('game_id', games)

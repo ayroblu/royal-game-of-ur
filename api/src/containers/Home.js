@@ -31,12 +31,17 @@ class Home extends Component {
       this.props.mainActions.set({errorText: 'Connection error'})
     })
   }
+  _renderExistingGames(game){
+    return (
+      <Link key={game.gameId} to={`/game/${game.gameId}`} className='block gameLink'>{game.gameId}</Link>
+    )
+  }
   render() {
     let existingGames = <div className='block'>Loading...</div>
     const {loading, games, nextGame} = this.props.home
     if (!loading){
       if (games.length){
-        existingGames = games.map(g=>(<div key={g.gameId} className='block'>{g.gameId}</div>))
+        existingGames = games.map(this._renderExistingGames)
       } else {
         existingGames = <div className='block'>No games found</div>
       }

@@ -51,6 +51,7 @@ class RoyalGameOfUr extends Component {
     }
     const isFirstPlayer = firstPlayerId === yourId
     let secondPlayer = null
+    let yId = yourId
     if (secondPlayerId){
       secondPlayer = {
         id: secondPlayerId
@@ -64,6 +65,7 @@ class RoyalGameOfUr extends Component {
       , name: 'Player 2'
       }
       window.localStorage.setItem('yourId', secondPlayer.id)
+      yId = secondPlayer.id
       setTimeout(()=>{
         if (this.props.onEvent) this.props.onEvent({type: 'join-game', secondPlayer})
       })
@@ -89,7 +91,7 @@ class RoyalGameOfUr extends Component {
     }
     this.props.rguActions.set({
       board, firstPlayer, secondPlayer, hasStarted: playerTurn !== 0, playerTurn
-    , yourId: yourId ? yourId : secondPlayer.id, isFirstPlayer
+    , yourId: yId, isFirstPlayer
     })
     console.log('isFirstPlayer', isFirstPlayer)
     if (playerTurn === 0 && isFirstPlayer && secondPlayer){
@@ -99,6 +101,9 @@ class RoyalGameOfUr extends Component {
         this.calculatePoints()
       })
     }
+  }
+  componentWillUnmount(){
+    this.props.rguActions.reset()
   }
   _getText(props){
     const playerNumber = props.isFirstPlayer ? 1 : 2

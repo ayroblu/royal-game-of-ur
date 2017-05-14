@@ -2,6 +2,16 @@
   display: flex;
   flex-direction: column;
   height: 100vh;
+  background: #fafafa;
+}
+.Game > a{
+  text-decoration: none;
+}
+.Game h1{
+  padding: 20px 0 10px;
+  font-size: 2rem;
+  background-color: #555;
+  color: white;
 }
 .Game > .flexGrow{
   flex-grow: 1;

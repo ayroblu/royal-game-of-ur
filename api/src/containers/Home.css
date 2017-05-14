@@ -13,7 +13,7 @@
   padding-top: 20px;
   padding-bottom: 10px;
 }
-.Home button, .Home a{
+.Home .start a{
   padding: 10px;
   background: #18f;
   color: white;
@@ -25,13 +25,13 @@
   text-decoration: none;
   display: inline-block;
 }
-.Home button:hover, .Home a:hover{
+.Home .start a:hover{
   background: #2af;
 }
-.Home button:active, .Home a:focus{
+.Home .start a:focus{
   background: #07f;
 }
-.Home button:focus, .Home a:focus{
+.Home .start a:focus{
   box-shadow: 2px 2px 8px rgba(0,0,0,0.6);
 }
 .Home .start{
@@ -47,5 +47,13 @@
   padding: 0;
 }
 .Home .existingGames ul > .block{
+  display: block;
   padding: 20px;
+}
+.Home .existingGames ul > .block.gameLink{
+  text-decoration: none;
+  color: inherit;
+}
+.Home .existingGames ul > .block.gameLink:hover{
+  background: #fafafa;
 }
