@@ -72,6 +72,7 @@ class RoyalGameOfUr extends Component {
     }
     const board = game.createBoard()
     if (playerTurn){
+      // restore piece position if game has started
       firstPlayer.pieces.forEach(p=>{
         const isOpponent = !isFirstPlayer
         const coord = game.posToCoords(p.pos, isOpponent)
@@ -85,7 +86,7 @@ class RoyalGameOfUr extends Component {
         const coord = game.posToCoords(p.pos, isOpponent)
         if (coord[0]<0) return
         board[coord[0]][coord[1]].player = {
-          id: p.id, playerId: firstPlayer.id, pos: p.pos, isOpponent
+          id: p.id, playerId: secondPlayer.id, pos: p.pos, isOpponent
         }
       })
     }

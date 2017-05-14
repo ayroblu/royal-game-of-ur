@@ -68,11 +68,13 @@ export function getAvailableMoves(board, playerPieces, diceResult, currentPlayer
       return null
     }
     const bb = getBoardBlock(board, posToCoords(endPos))
+    // For the one invulnerable block
     if (bb.player && bb.player.id !== currentPlayerId && bb.invulnerable){
       ++endPos
     }
     const c = posToCoords(endPos)
-    if (board[c[0]][c[1]].player && board[c[0]][c[1]].player.playerId === currentPlayerId){
+    // Don't move where there is a piece already
+    if (endPos !== 15 && board[c[0]][c[1]].player && board[c[0]][c[1]].player.playerId === currentPlayerId){
       return null
     }
     if (history.includes(endPos)){
