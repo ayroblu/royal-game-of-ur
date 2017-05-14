@@ -75,6 +75,15 @@ class Home extends Component {
           <h2>Here's the youtube video that inspired me to make this, as well as where I get the basic rules from</h2>
           <iframe width="560" height="315" src="https://www.youtube.com/embed/WZskjLq040I" frameBorder="0" allowFullScreen></iframe>
         </div>
+        <div className='Left'>
+          <h2>Basic rules</h2>
+          <p>The game is similar to a smaller version of ludo.</p>
+          <p>You have seven pieces, you want to get your pieces on and around the track to the finish.</p>
+          <p>The middle section is common ground meaning you can remove opponent pieces, or they can remove your pieces when you land on opposing pieces.</p>
+          <p>There are two types of special squares, one is for a reroll and the other is where your piece cannot be removed, and an opposing piece simply moves to the next square.</p>
+          <p>The dice roll is a set of 4 D4's, tetrahedrons, where each has 2 out of 4 white points, where if a white point is sitting up, it counts as a move. For the purposes of this version, the math is the same under the hood, but I just output the move counter and available moves.</p>
+          <p>First to 7 points wins!</p>
+        </div>
         <div className='start'>
           <Link to={`/game/${nextGame}`}>Start a game!</Link>
         </div>
@@ -84,6 +93,21 @@ class Home extends Component {
             {existingGames}
           </div>
         </section>
+        <div className='Left'>
+          <h2>Wishlist</h2>
+          <p>This was a nice side project, but I'd really like to add the following</p>
+          <ul>
+            <li>Better graphics and images which more accurate reflect the game board</li>
+            <li>Better animations, 3D, dice rolls</li>
+            <li>Game chat</li>
+            <li>Game names</li>
+            <li>Mobile support</li>
+            <li>So much more!</li>
+          </ul>
+        </div>
+        <footer>
+          Built by Ben, view the code at the github link <a href='https://github.com/ayroblu/royal-game-of-ur'>here</a>
+        </footer>
       </div>
     )
   }

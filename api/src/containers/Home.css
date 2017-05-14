@@ -34,15 +34,23 @@
 .Home .start a:focus{
   box-shadow: 2px 2px 8px rgba(0,0,0,0.6);
 }
+.Home > .Left{
+  width: 80%;
+  text-align: left;
+  margin: 0 auto;
+  overflow: auto;
+}
 .Home .start{
   margin: 20px 0 0;
 }
 .Home .existingGames{
   margin: 20px 0 0;
   background: white;
+  overflow: auto;
 }
 .Home .existingGames > .games{
-  margin: 10px 20px;
+  width: 80%;
+  margin: 10px auto;
   border: 4px solid #ddd;
   padding: 0;
 }
@@ -71,4 +79,12 @@
 }
 .Home .games > table td, .Home .games > table th{
   padding: 6px;
+}
+.Home > footer{
+  color: #aaa;
+  padding: 50px;
+  background: white;
+}
+.Home > footer a{
+  color: inherit;
 }
